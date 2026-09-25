@@ -26,6 +26,7 @@ dependencies = [
     "pygrib>=2.1.8",
     "scikit-learn>=1.9.1",
     "scipy>=1.18.1",
+    "shap>=0.52.0",
     "torch>=2.14.0",
     "torchaudio>=2.11.0",
     "torchvision>=0.29.0",
