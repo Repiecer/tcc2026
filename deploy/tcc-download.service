@@ -6,28 +6,26 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=tcc
-Group=tcc
 WorkingDirectory=/opt/tcc
 
-# 数据与状态都放在数据盘，便于扩容 / 备份
+# ---------- 三个必须显式设置的环境变量 ----------
+# 1) 数据落盘位置
 Environment=TCC_DATA_DIR=/srv/tcc-data
-# ⚠️ 关键 1：cdsswarm 的断点续传状态存在 $XDG_CACHE_HOME/cdsswarm/sessions/
-#    不显式指定的话它会落在 ~/.cache，换用户 / 重建容器后就丢了
+# 2) cdsswarm 的断点续传状态存在 $XDG_CACHE_HOME/cdsswarm/sessions/
+#    不设的话会用 ~/.cache，而 ProtectHome=true 会让它不可读 → 状态丢失 → 重新排队
 Environment=XDG_CACHE_HOME=/srv/tcc-data/.cache
-# ⚠️ 关键 2：显式指定 CDS 凭据位置。
-#    cdsapi 的查找顺序是 $CDSAPI_RC → ~/.cdsapirc，
-#    这里写死是为了兼容 ProtectHome=true（家目录不可读）
+# 3) 显式指定 CDS 凭据（cdsapi 默认找 ~/.cdsapirc，设 CDSAPI_RC 可覆盖）
 Environment=CDSAPI_RC=/opt/tcc/.cdsapirc
 # 无 TTY 环境，关掉 cdsswarm 的交互式界面
 Environment=TERM=dumb
 
-ExecStart=/opt/tcc/.venv/bin/python -m tcc.download_workers \
-    --config /opt/tcc/configs/download.yaml
+# 用"按路径执行脚本"而不是 `python -m tcc.download_workers`，
+# 这样最小环境（只装 5 个包）就能跑，不需要把 tcc 包安装进 venv。
+ExecStart=/opt/tcc/.venv/bin/python /opt/tcc/src/tcc/download_workers.py --config /opt/tcc/configs/download.yaml
 
 # 一次运行可能持续很久（排队 + 多轮退避），不设超时
 TimeoutStartSec=infinity
-# 收到停止信号后给足时间收尾（脚本已注册 SIGTERM 处理，会跑完当前轮）
+# 脚本已注册 SIGTERM 处理，会跑完当前轮再退出
 KillSignal=SIGTERM
 TimeoutStopSec=300
 
@@ -36,12 +34,17 @@ StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=tcc-download
 
-# 轻量加固
+# 轻量加固（不建专用用户，服务以 root 运行）
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=full
 ProtectHome=true
 ReadWritePaths=/srv/tcc-data
+
+# 如果之后想改用专用用户，取消下面两行注释即可（并确保该用户对
+# /opt/tcc 与 /srv/tcc-data 有读写权限）：
+# User=tcc
+# Group=tcc
 
 [Install]
 WantedBy=multi-user.target

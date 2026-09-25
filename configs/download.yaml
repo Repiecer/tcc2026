@@ -9,6 +9,12 @@
 # 数据落盘根目录。null = 优先读环境变量 TCC_DATA_DIR，否则用仓库下的 ./data
 data_dir: null
 
+# CDS 凭据文件路径。
+# 建议写绝对路径（如 /opt/tcc/.cdsapirc），这样无论是手动跑还是 systemd 跑，
+# 都不依赖 HOME，也不会踩到 "Missing/incomplete configuration file: /root/.cdsapirc"。
+# 留 null = 用 $CDSAPI_RC，再退回 ~/.cdsapirc
+cdsapirc: null
+
 # 并行 worker 数。CDS 对单账号有并发上限，建议 4—8，别开太大
 workers: 6
 

@@ -95,9 +95,16 @@ def _days_in(year: int, month: int) -> list[str]:
 
 
 def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
-    """按 (年, 月) × 分组 生成 cdsswarm 任务列表。"""
+    """按 (年, 月) × 分组 生成 cdsswarm 任务列表。
+
+    未安装 cdsswarm 时退化为轻量占位对象，这样 ``--dry-run`` 在任何环境都能跑
+    （部署时可以先在本地核对计划与体积，再上服务器装环境）。
+    """
     if cdsswarm is None:
-        raise RuntimeError("未安装 cdsswarm：uv add cdsswarm")
+        from types import SimpleNamespace
+        make_task = lambda **kw: SimpleNamespace(**kw)  # noqa: E731
+    else:
+        make_task = cdsswarm.Task
 
     tasks = []
     out_root = cfg["data_dir"] / "raw"
@@ -126,7 +133,7 @@ def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
                     request["product_type"] = ["reanalysis"]
 
                 target = out_root / name / f"{name}_{year}{month:02d}.nc"
-                tasks.append(cdsswarm.Task(dataset=g["dataset"], request=request, target=str(target)))
+                tasks.append(make_task(dataset=g["dataset"], request=request, target=str(target)))
     return tasks
 
 
@@ -196,6 +203,52 @@ def write_manifest(raw_root: Path, manifest: Path) -> int:
     return len(lines)
 
 
+# ---------------------------------------------------------------- 凭据预检
+
+
+def preflight_credentials(cfg: dict, logfile: Path | None = None) -> bool:
+    """在提交任何请求之前确认 CDS 凭据可用。
+
+    为什么必须做这一步：cdsapi 的凭据查找顺序是
+    ``$CDSAPI_RC`` → ``~/.cdsapirc``。手动在 shell 里跑脚本时，
+    systemd unit 里的 ``Environment=CDSAPI_RC=`` 是不生效的，
+    于是会去读 ``/root/.cdsapirc`` 而报
+    "Missing/incomplete configuration file"。
+
+    如果不预检，脚本会照样提交全部任务、全部失败，再按 30 轮退避白等几小时。
+    这里提前拦住，并显式设置 ``CDSAPI_RC``，让 cdsswarm 内部创建的 client 也能读到。
+    """
+    configured = cfg.get("cdsapirc") or os.environ.get("CDSAPI_RC")
+    path = Path(configured).expanduser() if configured else Path("~/.cdsapirc").expanduser()
+
+    if not path.exists():
+        log(f"❌ 找不到 CDS 凭据文件: {path}", logfile)
+        log("   当前用户 HOME = " + os.path.expanduser("~"), logfile)
+        log("   三种修法（任选其一）:", logfile)
+        log("     A) 放到 cdsapi 的默认位置（最省事）:", logfile)
+        log(f"        cp /opt/tcc/.cdsapirc {path}  &&  chmod 600 {path}", logfile)
+        log("     B) 在 configs/download.yaml 里加一行:", logfile)
+        log("        cdsapirc: /opt/tcc/.cdsapirc", logfile)
+        log("     C) 在当前 shell 里 export:", logfile)
+        log("        export CDSAPI_RC=/opt/tcc/.cdsapirc", logfile)
+        return False
+
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    if "url" not in text or "key" not in text:
+        log(f"❌ 凭据文件内容不完整，需要 url 和 key 两行: {path}", logfile)
+        log("   正确格式:", logfile)
+        log("     url: https://cds.climate.copernicus.eu/api", logfile)
+        log("     key: <你的 API Key>", logfile)
+        return False
+
+    # 显式落到环境变量里，保证 cdsswarm 内部 new 出来的 Client 也读得到
+    os.environ["CDSAPI_RC"] = str(path)
+    mode = path.stat().st_mode & 0o777
+    warn = "  ⚠ 权限过宽，建议 chmod 600" if mode & 0o077 else ""
+    log(f"✓ CDS 凭据: {path}{warn}", logfile)
+    return True
+
+
 # ---------------------------------------------------------------- 主流程
 
 
@@ -234,8 +287,13 @@ def run(cfg: dict, only: list[str] | None, dry_run: bool, verify_only: bool) -> 
         log(f"--verify-only: 清单已写入，共 {n} 个有效文件")
         return 0 if not pending else 1
 
+    # ---- 凭据预检：必须在提交任何请求之前
+    if not preflight_credentials(cfg, logfile):
+        return 2
+
     # ---- 轮次循环：轮次级重试 + 退避
     backoff = BACKOFF_BASE
+    prev_errors: frozenset[str] | None = None
     for rnd in range(1, int(cfg["max_rounds"]) + 1):
         if _stop:
             break
@@ -257,14 +315,26 @@ def run(cfg: dict, only: list[str] | None, dry_run: bool, verify_only: bool) -> 
             log(f"本轮异常: {type(exc).__name__}: {exc}", logfile)
             results = []
 
+        ok = 0
+        errors: frozenset[str] = frozenset()
         if not results:
             log("本轮未返回结果（被中断或全部失败），退避后重试", logfile)
         else:
             ok = sum(1 for r in results if r.success)
+            errors = frozenset(r.error for r in results if not r.success and r.error)
             log(f"本轮成功 {ok} / {len(results)}")
             for r in results:
                 if not r.success:
                     log(f"  ✗ {Path(r.task.target).name}: {r.error}", logfile)
+
+            # 连续两轮「零成功 + 完全相同」的错误 → 判定为不可重试的问题
+            # （凭据错误、参数非法、变量名不存在等），提前退出而不是白等几小时
+            if ok == 0 and errors and errors == prev_errors:
+                log("❌ 连续两轮出现完全相同的失败，判定为不可重试错误，提前退出", logfile)
+                for e in sorted(errors)[:3]:
+                    log(f"   原因: {e}", logfile)
+                break
+        prev_errors = errors or prev_errors
 
         # ---- 校验并清理坏文件，坏文件会在下一轮重下
         bad = [t for t in pending if not is_valid(Path(t.target))]
