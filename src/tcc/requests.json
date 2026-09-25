@@ -1,0 +1,10 @@
+[
+    {
+        "dataset": "reanalysis-era5-single-levels",
+        "request": {
+            "product_type": ["reanalysis"],
+            "variable": ["2m_temperature"],
+            "year": ["2024"]
+        }
+    }
+]
