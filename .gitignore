@@ -9,5 +9,12 @@ wheels/
 data/
 examples/
 
+# 下载缓存（cdsswarm 断点续传状态）
+cache/
+
+# 凭据：绝对不要提交
+.cdsapirc
+.cdsapirc.*
+
 # Virtual environments
 .venv

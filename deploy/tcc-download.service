@@ -1,0 +1,47 @@
+[Unit]
+Description=TCC ERA5 bulk download (retry + resume)
+# 等网络真正可用再启动，避免开机后立刻失败
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=tcc
+Group=tcc
+WorkingDirectory=/opt/tcc
+
+# 数据与状态都放在数据盘，便于扩容 / 备份
+Environment=TCC_DATA_DIR=/srv/tcc-data
+# ⚠️ 关键 1：cdsswarm 的断点续传状态存在 $XDG_CACHE_HOME/cdsswarm/sessions/
+#    不显式指定的话它会落在 ~/.cache，换用户 / 重建容器后就丢了
+Environment=XDG_CACHE_HOME=/srv/tcc-data/.cache
+# ⚠️ 关键 2：显式指定 CDS 凭据位置。
+#    cdsapi 的查找顺序是 $CDSAPI_RC → ~/.cdsapirc，
+#    这里写死是为了兼容 ProtectHome=true（家目录不可读）
+Environment=CDSAPI_RC=/opt/tcc/.cdsapirc
+# 无 TTY 环境，关掉 cdsswarm 的交互式界面
+Environment=TERM=dumb
+
+ExecStart=/opt/tcc/.venv/bin/python -m tcc.download_workers \
+    --config /opt/tcc/configs/download.yaml
+
+# 一次运行可能持续很久（排队 + 多轮退避），不设超时
+TimeoutStartSec=infinity
+# 收到停止信号后给足时间收尾（脚本已注册 SIGTERM 处理，会跑完当前轮）
+KillSignal=SIGTERM
+TimeoutStopSec=300
+
+# 日志走 journald：journalctl -u tcc-download -f
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=tcc-download
+
+# 轻量加固
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/tcc-data
+
+[Install]
+WantedBy=multi-user.target

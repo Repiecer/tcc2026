@@ -1,0 +1,48 @@
+# 可选的 Docker Compose 方案（结论：不是必需的，见 docs/服务器部署指南.md）
+#
+# 用法：
+#   cd deploy
+#   TCC_HOST_DATA=/srv/tcc-data TCC_HOST_CACHE=/srv/tcc-cache docker compose up -d --build
+#   docker compose logs -f
+#   docker compose down
+#
+# ⚠️ 两个挂载都必须有：
+#   /data  —— 下载的数据
+#   /cache —— cdsswarm 的断点续传状态（$XDG_CACHE_HOME/cdsswarm/sessions）
+#             少了这个，容器一重建就要重新排队！
+
+services:
+  download:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: tcc-download:latest
+    container_name: tcc-dl
+
+    # 脚本退出码 0 = 全部下完 → 保持停止；1 = 还有未完成 → 重启继续。
+    # 所以用 on-failure 而不是 unless-stopped（后者会在下完后无限空转重启）。
+    restart: on-failure
+
+    environment:
+      TCC_DATA_DIR: /data
+      XDG_CACHE_HOME: /cache
+      TERM: dumb
+
+    volumes:
+      - ${TCC_HOST_DATA:-../data}:/data
+      - ${TCC_HOST_CACHE:-../cache}:/cache
+
+    # 收到停止信号后给足时间跑完当前轮
+    stop_grace_period: 5m
+
+    # 限制资源，避免在小机器上把内存吃满
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"

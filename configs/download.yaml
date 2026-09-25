@@ -1,0 +1,64 @@
+# ERA5 批量下载配置
+#
+# 用法：
+#   uv run python -m tcc.download_workers --config configs/download.yaml --dry-run
+#   uv run python -m tcc.download_workers --config configs/download.yaml
+#
+# area 格式: [北, 西, 南, 东]  (N, W, S, E)
+
+# 数据落盘根目录。null = 优先读环境变量 TCC_DATA_DIR，否则用仓库下的 ./data
+data_dir: null
+
+# 并行 worker 数。CDS 对单账号有并发上限，建议 4—8，别开太大
+workers: 6
+
+# 单个任务在 cdsswarm 内部的失败重试次数
+max_retries: 10
+
+# 外层轮次：一轮跑完后，对仍失败/被中断的任务再跑一轮，直到全部成功
+# 每次重跑都会自动 skip 已完成的文件、复用 CDS 上已提交的 job（不重新排队）
+max_rounds: 30
+
+# 年份区间（含两端）
+years: [1981, 2025]
+
+# 月份（5—8 月暖季）
+months: [5, 6, 7, 8]
+
+# 统一时区：让"日"按北京时间切分，与 Tmax 的定义保持一致
+time_zone: "utc+08:00"
+
+# 亚日采样频率。1_hourly 保持精度（日最高温误差约 0.1℃）；
+# 3_hourly 省 2/3 流量，但日最高温误差可达约 1℃，而本项目 σ(d) 仅 1.2—1.5℃，不要降。
+frequency: "1_hourly"
+
+# 下载分组。每个分组 = 一个 CDS 数据集 + 一套检索参数
+groups:
+
+  # ① 目标变量：长江中下游区域日最高气温（ERA5-Land，0.1°，仅陆地）
+  tmax:
+    dataset: derived-era5-land-daily-statistics
+    statistic: daily_maximum
+    variables: [2m_temperature]
+    area: [34, 110, 28, 122]        # 只下研究区，比大域小约 38 倍
+
+  # ② 大尺度单层要素：SST + 海平面气压（需要大域才能看到副高与太平洋海温）
+  sst_mslp:
+    dataset: derived-era5-single-levels-daily-statistics
+    statistic: daily_mean
+    variables: [sea_surface_temperature, mean_sea_level_pressure]
+    area: [55, 70, 15, 140]
+
+  # ③ 环流要素：500/850 hPa 位势高度与风场
+  circ:
+    dataset: derived-era5-pressure-levels-daily-statistics
+    statistic: daily_mean
+    variables: [geopotential, u_component_of_wind, v_component_of_wind]
+    pressure_level: ['500', '850']
+    area: [55, 70, 15, 140]
+
+# 说明：
+#  - 三个数据集都是"服务端算好的日统计量"，下载量比逐小时小 24 倍，
+#    且不需要本地再聚合，同时由服务端保证 time_zone 口径一致。
+#  - 若确实需要逐小时原始数据，把 dataset 换成 reanalysis-era5-* 系列，
+#    并补上 time 字段；但体积会回到百 GB 量级。

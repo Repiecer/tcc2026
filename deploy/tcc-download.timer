@@ -1,0 +1,13 @@
+[Unit]
+Description=Periodically re-run the TCC ERA5 downloader
+
+[Timer]
+# 首次启动 2 分钟后跑一次，之后每 30 分钟兜底重跑一次。
+# 脚本是幂等的：已完成的文件会跳过，未完成的会继续，不会重复下载。
+OnBootSec=2min
+OnUnitActiveSec=30min
+# 上一次还没跑完时，systemd 不会并发启动第二个实例
+Unit=tcc-download.service
+
+[Install]
+WantedBy=timers.target

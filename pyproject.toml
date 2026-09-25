@@ -24,6 +24,7 @@ dependencies = [
     "numpy>=2.5.3",
     "pandas>=3.0.6",
     "pygrib>=2.1.8",
+    "pyyaml>=6.0",
     "scikit-learn>=1.9.1",
     "scipy>=1.18.1",
     "shap>=0.52.0",
@@ -36,6 +37,7 @@ dependencies = [
 
 [project.scripts]
 tcc = "tcc:main"
+tcc-download = "tcc.download_workers:main"
 
 [build-system]
 requires = ["uv_build>=0.12.18,<0.13.0"]
