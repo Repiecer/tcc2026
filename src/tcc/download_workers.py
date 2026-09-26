@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import calendar
 import hashlib
+import logging
 import os
 import sys
 import time
@@ -37,6 +38,14 @@ try:
     import cdsswarm
 except ImportError:            # 允许没装 cdsswarm 时跑 --dry-run
     cdsswarm = None            # type: ignore[assignment]
+
+# CDS 撞排队配额时，requests/ecmwf 会打大段 traceback。那不是错误，
+# 是"稍后重试"的正常信号，这里把它压掉，只保留我们自己汇总的那一行提示。
+for _name in ("cdsswarm", "ecmwf", "urllib3", "requests"):
+    logging.getLogger(_name).setLevel(logging.CRITICAL)
+
+# 判定"排队配额已满"的关键词（CDS 不同接口措辞略有差异）
+QUOTA_HINTS = ("temporarily limited", "queued requests", "too many requests", "429")
 
 DEFAULT_RESOLUTION = 0.25      # ERA5 单层 / 气压层
 LAND_RESOLUTION = 0.1          # ERA5-Land
@@ -162,8 +171,18 @@ def check_cds_credentials(cfg: dict) -> bool:
     return True
 
 
+def is_quota_error(msg: str) -> bool:
+    """是不是"CDS 排队配额已满"——这类失败是正常的，等一会再来就行，不该报错。"""
+    m = (msg or "").lower()
+    return any(h in m for h in QUOTA_HINTS)
+
+
 def run_cds(cfg: dict, tasks: list[Any]) -> int:
-    """跑 CDS 任务（轮次重试 + 退避），返回仍未完成的数量。"""
+    """跑 CDS 任务，返回仍未完成的数量。
+
+    并发数自动取值（``2 × 分组数``），不需要手工配置。
+    "排队配额已满"是 CDS 全局节流的正常表现，只汇总提示、不当错误报。
+    """
     if not tasks:
         return 0
     if cdsswarm is None:
@@ -172,51 +191,60 @@ def run_cds(cfg: dict, tasks: list[Any]) -> int:
     if not check_cds_credentials(cfg):
         return len(tasks)
 
+    # 并发自动取值：CDS 的排队配额按数据集算，每个数据集给 2 个并发。
+    # 撞配额时不要降并发 —— 那是 CDS 全局节流，降并发帮不上忙，只会更慢。
+    workers = max(2, 2 * len({Path(t.target).parent.name for t in tasks}))
     backoff = CDS_RETRY_BASE
-    for rnd in range(1, int(cfg.get("max_rounds", 20)) + 1):
+
+    for rnd in range(1, int(cfg.get("max_rounds", 30)) + 1):
         pending = [t for t in tasks if not is_valid(Path(t.target))]
         if not pending:
             break
-        log(f"--- CDS 第 {rnd} 轮：{len(pending)} 个任务待下载 ---")
+        log(f"--- CDS 第 {rnd} 轮：{len(pending)} 个待下载（并发 {workers}）---")
+
         try:
             results = cdsswarm.download(
                 pending,
-                num_workers=int(cfg.get("workers", 4)),
-                skip_existing=True,   # 续传第 1 层：跳过已完成
-                reuse_jobs=True,      # 续传第 2 层：复用 CDS 上已提交的 job（不重新排队）
-                max_retries=int(cfg.get("max_retries", 3)),
-                on_message=lambda m: log(str(m)),
+                num_workers=workers,
+                skip_existing=True,   # 已下载的跳过
+                reuse_jobs=True,      # 复用 CDS 上已提交的 job，不重新排队
+                max_retries=2,        # 重试太多只会反复撞配额
+                on_message=lambda m: None,
             )
         except Exception as exc:  # noqa: BLE001
-            log(f"本轮异常: {type(exc).__name__}: {exc}")
+            log(f"  本轮异常: {type(exc).__name__}: {exc}")
             results = []
 
-        ok = 0
+        ok = quota = 0
         for r in results:
             if r.success:
                 ok += 1
+            elif is_quota_error(r.error):
+                quota += 1
             else:
                 log(f"  ✗ {Path(r.task.target).name}: {r.error}")
-        log(f"本轮成功 {ok}/{len(results)}")
+
+        if ok:
+            log(f"  完成 {ok} 个")
+        if quota:
+            # 预期内的节流，不是错误 —— 只汇总一行，靠退避等它缓解
+            log(f"  CDS 排队配额已满，{quota} 个任务本轮跳过，稍后自动重试")
 
         left = []
-        for t in pending:                       # 清掉无效文件，下一轮重下
+        for t in pending:                 # 清掉坏文件（CDS 有时把 HTML 错误页写成 .nc）
             if is_valid(Path(t.target)):
                 continue
-            p = Path(t.target)
-            if p.exists():
-                p.unlink()
+            f = Path(t.target)
+            if f.exists():
+                f.unlink()
             left.append(t)
         if not left:
+            log("  CDS 全部完成 ✅")
             break
 
-        made_progress = ok > 0
-        if made_progress:
-            backoff = CDS_RETRY_BASE            # 有文件落盘 → 配额在放行，退避重置
-        log(f"仍有 {len(left)} 个未完成，{backoff}s 后继续")
+        log(f"  仍有 {len(left)} 个未完成，{backoff}s 后继续")
         time.sleep(backoff)
-        if not made_progress:
-            backoff = min(backoff * 2, CDS_RETRY_CAP)
+        backoff = CDS_RETRY_BASE if ok else min(backoff * 2, CDS_RETRY_CAP)
 
     return len([t for t in tasks if not is_valid(Path(t.target))])
 
@@ -266,7 +294,11 @@ def main(argv: list[str] | None = None) -> int:
                 sys.path.insert(0, str(Path(__file__).resolve().parent))
                 from openmeteo_fetch import fetch_group  # type: ignore
             for n in other:
-                fetch_group(cfg, cfg["groups"][n])
+                try:
+                    fetch_group(cfg, cfg["groups"][n])
+                except Exception as exc:   # noqa: BLE001 —— 一个源失败不该拖垮整个脚本
+                    log(f"❌ 分组 {n} 取数失败: {exc}")
+                    log("   （已完成的年份不受影响，修复后重跑会跳过）")
 
     # ---- CDS 任务
     tasks = build_cds_tasks(cfg, only)

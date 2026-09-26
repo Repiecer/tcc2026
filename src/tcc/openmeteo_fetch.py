@@ -78,6 +78,20 @@ def is_valid(path: Path) -> bool:
         return False
 
 
+def matches_grid(path: Path, nlat: int, nlon: int) -> bool:
+    """文件不仅要有数据，**网格形状还得和当前配置一致**。
+
+    否则改了 point_spacing / area 之后，旧形状的文件会被当成"已完成"而静默混用。
+    """
+    if not is_valid(path):
+        return False
+    try:
+        with xr.open_dataset(path) as ds:
+            return ds.sizes.get("latitude") == nlat and ds.sizes.get("longitude") == nlon
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def build_points(area: list[float], spacing: float) -> tuple[np.ndarray, np.ndarray]:
     """在 [N,W,S,E] 区域内按 spacing 生成规则的采样点网格。"""
     n, w, s, e = area
@@ -124,8 +138,15 @@ def _request(lats: list[float], lons: list[float], start: str, end: str) -> dict
             body = exc.read().decode()[:160]
             last = f"HTTP {exc.code}: {body}"
             if exc.code == 429:
-                # 两种限流：分钟级（等一分钟）和**小时级**（等到下一个整点）
-                if "Hourly" in body or "hour" in body.lower():
+                # 三种限流，处理方式完全不同：
+                if "Daily" in body:
+                    # 日配额用尽 —— 重试没有意义，直接抛出让人看懂的错误
+                    raise RuntimeError(
+                        "Open-Meteo 每日配额已用尽（Daily API request limit exceeded）。\n"
+                        "    配额在 UTC 00:00（北京时间 08:00）重置，明天再跑即可。\n"
+                        "    已完成的年份会自动跳过，不会重下；请勿反复重跑（每次重跑都会烧配额）。"
+                    ) from exc
+                if "Hourly" in body:
                     wait = _seconds_to_next_hour() + 30
                     log(f"    ⏳ 触发小时级限流，等待 {wait:.0f}s 到下一个整点")
                     time.sleep(wait)
@@ -184,7 +205,15 @@ def fetch_group(cfg: dict, group: dict, logfile: Path | None = None,
         f"= {len(point_chunks)*len(years)} 个请求；每年一落盘", logfile)
 
     written: list[Path] = []
+    skipped: list[int] = []
     for year in years:
+        # ---- 断点续传：该年 4 个月的文件都有效就整年跳过（连 API 都不调用）
+        targets = [out_dir / f"{name}_{year}_{m:02d}.nc" for m in months]
+        if all(matches_grid(t, len(lats), len(lons)) for t in targets):
+            written.extend(targets)
+            skipped.append(year)
+            continue
+
         yseries: dict[int, dict[str, float]] = {}
         for ci, chunk in enumerate(point_chunks, 1):
             clats = [all_pairs_lat[i] for i in chunk]
@@ -202,8 +231,11 @@ def fetch_group(cfg: dict, group: dict, logfile: Path | None = None,
                         b[ds_] = v
             time.sleep(SLEEP_BETWEEN)
 
-        # 该年数据到手 → 立刻写 4 个月的文件
+        # 该年数据到手 → 立刻写 4 个月的文件（已存在的月份不再重写）
         for month in months:
+            target = out_dir / f"{name}_{year}_{month:02d}.nc"
+            if matches_grid(target, len(lats), len(lons)):
+                continue
             dates = [f"{year}-{month:02d}-{d:02d}" for d in range(1, 32)
                      if f"{year}-{month:02d}-{d:02d}" in yseries.get(0, {})]
             if not dates:
@@ -216,7 +248,6 @@ def fetch_group(cfg: dict, group: dict, logfile: Path | None = None,
                 grid[:, gi // len(lons), gi % len(lons)] = np.array(
                     [b.get(dt, np.nan) for dt in dates], dtype="float32")
             grid += 273.15
-            target = out_dir / f"{name}_{year}_{month:02d}.nc"
             dso = xr.Dataset(
                 {"t2m": (("time", "latitude", "longitude"), grid)},
                 coords={"time": pd.to_datetime(dates),
@@ -234,6 +265,10 @@ def fetch_group(cfg: dict, group: dict, logfile: Path | None = None,
             dso.close()
             written.append(target)
         log(f"    ✓ {year} 年落盘完成（累计 {len(written)} 个文件）", logfile)
+
+    if skipped:
+        log(f"    ⏭ 跳过 {len(skipped)} 个已完成年份（{skipped[0]}—{skipped[-1]}），不消耗 API 配额",
+            logfile)
 
     return written
 

@@ -15,16 +15,10 @@ data_dir: null
 # 留 null = 用 $CDSAPI_RC，再退回 ~/.cdsapirc
 cdsapirc: null
 
-# 并行 worker 数。
-# ⚠️ CDS 的排队配额是**按数据集**算的（报错原文 "Number queued requests for
-#    this dataset is temporarily limited"）。任务表已按分组交错排列，
-#    所以 6 个 worker ≈ 每个数据集 2 个并发，正好吃满三份配额。
-workers: 6
-
-# 单个任务在 cdsswarm 内部的失败重试次数。
-# 不宜大：每次重试都会重新提交请求，配额已满时只是反复撞墙、刷日志。
-# 把耐心留给外层轮次（5 分钟起步、指数退避到 1 小时；一旦有文件落盘就重置）。
-max_retries: 2
+# 并发数、重试次数都由脚本自动决定，不需要在这里配：
+#   * 并发起步 = 2 × 分组数（CDS 的排队配额按数据集算，每个数据集留 2 个并发），
+#     撞到配额自动降 1，顺利就慢慢加回去；
+#   * 单个任务内部重试固定 2 次（重试太多只会反复撞配额）。
 
 # 外层轮次：一轮跑完后，对仍失败/被中断的任务再跑一轮，直到全部成功。
 # 每次重跑都会自动 skip 已完成的文件、并复用 CDS 上已提交的 job（不重新排队）。
@@ -74,7 +68,10 @@ groups:
     dataset: derived-era5-single-levels-daily-statistics
     statistic: daily_mean
     variables: [sea_surface_temperature, mean_sea_level_pressure]
-    area: [55, 70, 15, 140]
+    # 原为 [55, 70, 15, 140]：140°E 把西太暖池和副高核心区切掉了 —— 等于下了几十 GB
+    # 却缺了最关键的一块（副高中心在 130—150°E、暖池核心在 120—160°E）。
+    # 现往东扩到 160°E、南到赤道。area 不计入 cost limit，扩区域不要钱（格点数仅 +16%）。
+    area: [50, 95, 0, 160]
     # CDS 的 cost = 天数 × 变量数 × 层数。单变量实测 372 天可过、465 天被拒，
     # 这里 2 个变量 → 每年上限约 186 天 → 取 6 年/请求（186 天）。
     year_batch: 6
@@ -85,7 +82,8 @@ groups:
     statistic: daily_mean
     variables: [geopotential, u_component_of_wind, v_component_of_wind]
     pressure_level: ['500', '850']
-    area: [55, 70, 15, 140]
+    # 同 ②：往东扩到 160°E 才看得到副高主体；南到赤道才有热带对流（延伸期可预报性的来源）。
+    area: [55, 95, 0, 160]
     # 3 变量 × 2 层 = 6 个字段 → 每年上限约 62 天 → 取 2 年/请求（62 天）
     year_batch: 2
 
@@ -94,3 +92,12 @@ groups:
 #    且不需要本地再聚合，同时由服务端保证 time_zone 口径一致。
 #  - 若确实需要逐小时原始数据，把 dataset 换成 reanalysis-era5-* 系列，
 #    并补上 time 字段；但体积会回到百 GB 量级。
+#  - 体积估算（按实测压缩率：ERA5-Land 日最高 0.645 字节/值；
+#    ERA5 日场 0.645—2.0，取中值 1.2）：
+#        本配置 约 3.0 GB   （tmax 0.03 / sst_mslp 0.70 / circ 2.30）
+#        逐小时版 约 99 GB  （circ 73 / sst_mslp 24 / tmax 1.0）
+#  - 可选精简，**等因子筛选结果出来再决定，现在别删**：
+#        * mean_sea_level_pressure 与 500 hPa 位势高度高度共线 → 约省 0.35 GB；
+#        * u/v 只留 850 hPa、500 hPa 只留位势，6 个字段降到 3 个 → circ 组省一半（约 1.15 GB）。
+#    这两刀合计只值 1.5 GB（体积已不是瓶颈），但删错变量是不可逆的科学损失 ——
+#    先跑相关/互信息/VIF，再回来改这里。
