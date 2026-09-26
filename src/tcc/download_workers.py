@@ -31,6 +31,7 @@ import signal
 import sys
 import time
 from datetime import datetime
+from itertools import zip_longest
 from pathlib import Path
 from typing import Any
 
@@ -46,10 +47,29 @@ except ImportError:  # pragma: no cover
 DEFAULT_RESOLUTION = 0.25  # ERA5 单层/气压层
 LAND_RESOLUTION = 0.1      # ERA5-Land
 MIN_VALID_BYTES = 1024     # 小于这个体积一定是坏文件
-BACKOFF_BASE = 60          # 轮次间隔起始秒数
-BACKOFF_CAP = 1800         # 轮次间隔上限（30 分钟）
+# ⚠️ CDS 对单账号"排队中请求数"有硬上限（实测约 6 个/数据集）。
+# 撞上后新提交会被拒："Number queued requests for this dataset is temporarily limited"。
+# 因此轮次间隔必须够长，等队列消化掉再继续，否则只是反复撞墙。
+BACKOFF_BASE = 300         # 轮次间隔起始秒数（5 分钟）
+BACKOFF_CAP = 3600         # 轮次间隔上限（1 小时）
 
 _stop = False
+
+
+def _import_sibling(module_name: str):
+    """导入同目录模块。
+
+    本脚本既可能以 ``python -m tcc.download_workers`` 运行（有包上下文），
+    也可能以 ``python /opt/tcc/src/tcc/download_workers.py`` 直接运行
+    （部署时为了避免装整个包，用的就是这种），后者没有包上下文，
+    所以这里做一次回退。
+    """
+    import importlib
+    try:
+        return importlib.import_module(f"tcc.{module_name}")
+    except ImportError:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        return importlib.import_module(module_name)
 
 
 def _handle_signal(signum: int, _frame: Any) -> None:
@@ -83,8 +103,13 @@ def load_config(path: Path) -> dict:
     cfg["_years"] = list(range(int(years[0]), int(years[1]) + 1))
 
     for name, g in cfg["groups"].items():
-        g.setdefault("resolution", LAND_RESOLUTION if "land" in g["dataset"] else DEFAULT_RESOLUTION)
         g["name"] = name
+        # 只有走 CDS 的分组有 dataset / resolution；走其他源的分组由各自模块处理
+        if "dataset" in g:
+            g.setdefault(
+                "resolution",
+                LAND_RESOLUTION if "land" in g["dataset"] else DEFAULT_RESOLUTION,
+            )
 
     return cfg
 
@@ -97,8 +122,16 @@ def _days_in(year: int, month: int) -> list[str]:
 def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
     """按 (年, 月) × 分组 生成 cdsswarm 任务列表。
 
-    未安装 cdsswarm 时退化为轻量占位对象，这样 ``--dry-run`` 在任何环境都能跑
-    （部署时可以先在本地核对计划与体积，再上服务器装环境）。
+    两个设计都是被 CDS 的配额实况逼出来的：
+
+    1. **年块打包** —— CDS 对单个请求有硬上限（实测 372 天通过、465 天报
+       "Your request is too large"）。按 ``year_batch`` 把连续若干年塞进一个请求，
+       把请求数压到最少，因为**成功的提交次数才是瓶颈**，不是数据量。
+    2. **分组交错** —— CDS 的排队配额按**数据集**算（报错原文 "for this dataset"）。
+       若按分组顺序发（先发完所有 tmax），另外两个数据集的配额就白白闲置。
+       这里把三组轮转交错，让 N 个 worker 分散到不同数据集，同时用满三份配额。
+
+    未安装 cdsswarm 时退化为轻量占位对象，这样 ``--dry-run`` 在任何环境都能跑。
     """
     if cdsswarm is None:
         from types import SimpleNamespace
@@ -106,20 +139,28 @@ def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
     else:
         make_task = cdsswarm.Task
 
-    tasks = []
     out_root = cfg["data_dir"] / "raw"
+    per_group: list[list[Any]] = []
+    batch = max(1, int(cfg.get("year_batch", 1)))
+    years = cfg["_years"]
+    year_blocks = [years[i:i + batch] for i in range(0, len(years), batch)]
 
     for name, g in cfg["groups"].items():
         if only and name not in only:
             continue
-        for year in cfg["_years"]:
+        if "dataset" not in g:          # 走 openmeteo / arco 的分组不产生 CDS 任务
+            continue
+        group_tasks: list[Any] = []
+        for block in year_blocks:
             for month in cfg["months"]:
                 month = int(month)
+                # 同一年块内各年该月的合法日期取并集（只有闰年 2 月才有差异，本项目 5—8 月不受影响）
+                days = sorted({d for y in block for d in _days_in(y, month)})
                 request: dict[str, Any] = {
                     "variable": list(g["variables"]),
-                    "year": [str(year)],
+                    "year": [str(y) for y in block],
                     "month": [f"{month:02d}"],          # 零填充：ERA5-Land 只认 '05'
-                    "day": _days_in(year, month),
+                    "day": days,
                     "daily_statistic": g["statistic"],
                     "time_zone": cfg["time_zone"],
                     "frequency": cfg["frequency"],
@@ -132,9 +173,19 @@ def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
                 if g["dataset"].startswith("reanalysis-"):
                     request["product_type"] = ["reanalysis"]
 
-                target = out_root / name / f"{name}_{year}{month:02d}.nc"
-                tasks.append(make_task(dataset=g["dataset"], request=request, target=str(target)))
-    return tasks
+                tag = f"{block[0]}-{block[-1]}" if len(block) > 1 else f"{block[0]}"
+                target = out_root / name / f"{name}_{tag}_{month:02d}.nc"
+                group_tasks.append(
+                    make_task(dataset=g["dataset"], request=request, target=str(target))
+                )
+        per_group.append(group_tasks)
+
+    # ---- 轮转交错：tmax[0], sst_mslp[0], circ[0], tmax[1], ...
+    # 这样 N 个 worker 会同时压在三份「按数据集」的配额上，而不是先把 tmax 跑完。
+    interleaved: list[Any] = []
+    for combo in zip_longest(*per_group):
+        interleaved.extend(t for t in combo if t is not None)
+    return interleaved
 
 
 def estimate_gb(cfg: dict, only: list[str] | None = None) -> float:
@@ -143,6 +194,8 @@ def estimate_gb(cfg: dict, only: list[str] | None = None) -> float:
     n_days = sum(calendar.monthrange(y, int(m))[1] for y in cfg["_years"] for m in cfg["months"])
     for name, g in cfg["groups"].items():
         if only and name not in only:
+            continue
+        if "resolution" not in g:       # 非 CDS 分组体积另行估算
             continue
         n, w, s, e = g["area"]
         res = g["resolution"]
@@ -275,6 +328,19 @@ def run(cfg: dict, only: list[str] | None, dry_run: bool, verify_only: bool) -> 
         log("--dry-run 结束，未发起任何请求")
         return 0
 
+    # ---- 非 CDS 数据源：直接取数，不受 CDS 排队与配额影响
+    for src, module_name in (("openmeteo", "openmeteo_fetch"), ("arco", "arco_fetch")):
+        names = [n for n, g in cfg["groups"].items()
+                 if g.get("source") == src and (not only or n in only)]
+        if not names:
+            continue
+        mod = _import_sibling(module_name)
+        for n in names:
+            try:
+                mod.fetch_group(cfg, cfg["groups"][n], logfile)
+            except Exception as exc:  # noqa: BLE001
+                log(f"❌ [{src}] 分组 {n} 取数失败: {type(exc).__name__}: {exc}", logfile)
+
     if cdsswarm is None:
         log("❌ 未安装 cdsswarm，无法下载。服务器上执行: uv sync --extra download")
         return 1
@@ -287,8 +353,8 @@ def run(cfg: dict, only: list[str] | None, dry_run: bool, verify_only: bool) -> 
         log(f"--verify-only: 清单已写入，共 {n} 个有效文件")
         return 0 if not pending else 1
 
-    # ---- 凭据预检：必须在提交任何请求之前
-    if not preflight_credentials(cfg, logfile):
+    # ---- 凭据预检：仅在确实有 CDS 任务时才需要
+    if tasks and not preflight_credentials(cfg, logfile):
         return 2
 
     # ---- 轮次循环：轮次级重试 + 退避
@@ -348,11 +414,18 @@ def run(cfg: dict, only: list[str] | None, dry_run: bool, verify_only: bool) -> 
             break
 
         log(f"仍有 {len(bad)} 个未完成，{backoff}s 后进入下一轮", logfile)
+        # 本轮有文件真正落盘 == 配额正在放行 → 把退避重置回起点。
+        # 否则退避会一路翻倍到 1 小时封顶再也不降，白等很久。
+        if len(bad) < len(pending):
+            if backoff != BACKOFF_BASE:
+                log(f"  ↺ 本轮有 {len(pending) - len(bad)} 个文件落盘，退避重置为 {BACKOFF_BASE}s", logfile)
+            backoff = BACKOFF_BASE
+        else:
+            backoff = min(backoff * 2, BACKOFF_CAP)
         for _ in range(backoff):
             if _stop:
                 break
             time.sleep(1)
-        backoff = min(backoff * 2, BACKOFF_CAP)
 
     # ---- 收尾：清点 + 生成校验和清单
     remaining = [t for t in tasks if not is_valid(Path(t.target))]

@@ -79,6 +79,12 @@ if [[ -z "$PYTHON" ]]; then
     exit 1
 fi
 echo "✓ Python  : ${PYTHON}"
+# 关键：uv 建的 venv，bin/python 是指向 uv 托管 Python 的符号链接，
+# 而托管目录默认在 ~/.local/share/uv/python/ 下（root 就是 /root/.local/...）。
+# 若开了 ProtectHome=true，systemd 就看不到链接目标，
+# 会报 "Unable to locate executable" 和 203/EXEC —— 极难排查。
+PYTHON_REAL="$(readlink -f "${PYTHON}" 2>/dev/null || echo "${PYTHON}")"
+echo "  真实解释器: ${PYTHON_REAL}"
 
 # 验证解释器真的能跑，且下载所需的依赖齐全
 if ! "$PYTHON" -c "
@@ -128,14 +134,25 @@ echo
 
 # ---------- 5. ProtectHome 条件判断 ----------
 # ProtectHome=true 会让 /home、/root、/run/user 不可读。
-# 代码或数据若恰好在这些位置，加了它服务反而起不来，所以做条件判断。
-HARDEN_HOME="# ProtectHome 已省略：代码/数据位于家目录下，启用会导致服务读不到文件"
-NEEDS_HOME_PROTECT=1
-for prefix in /home /root /run/user; do
-    case "${REPO_DIR}" in ${prefix}*) NEEDS_HOME_PROTECT=0 ;; esac
-    case "${DATA_DIR}" in ${prefix}*) NEEDS_HOME_PROTECT=0 ;; esac
+# 判定必须覆盖三处：代码目录、数据目录、以及**解释器解析后的真实路径**。
+# 最容易漏的就是第三个 —— uv 托管的 Python 恰好就在 ~/.local/share/uv/python/ 下。
+HARDEN_HOME="ProtectHome=true"
+for pair in "代码目录:${REPO_DIR}" "数据目录:${DATA_DIR}" "解释器:${PYTHON_REAL}"; do
+    label="${pair%%:*}"
+    path="${pair#*:}"
+    for prefix in /home /root /run/user; do
+        case "${path}" in
+            "${prefix}"|"${prefix}"/*)
+                HARDEN_HOME="# ProtectHome 已省略：${label} ${path} 位于 ${prefix} 下，启用后服务将读不到它"
+                ;;
+        esac
+    done
 done
-[[ "$NEEDS_HOME_PROTECT" == "1" ]] && HARDEN_HOME="ProtectHome=true"
+if [[ "${HARDEN_HOME}" == "ProtectHome=true" ]]; then
+    echo "✓ 加固    : ProtectHome=true 可用"
+else
+    echo "⚠ 加固    : 已关闭 ProtectHome（有路径位于家目录下）"
+fi
 
 RC_ENV="# 未找到 CDS 凭据文件，请按上面的提示创建"
 [[ -n "$RC" ]] && RC_ENV="Environment=CDSAPI_RC=${RC}"
@@ -163,7 +180,9 @@ ExecStart=${PYTHON} ${ENTRY} --config ${CONFIG}
 
 TimeoutStartSec=infinity
 KillSignal=SIGTERM
-TimeoutStopSec=300
+# cdsswarm 不一定会及时响应 SIGTERM（它会先跑完手上的重试），
+# 所以给 60s 收尾，之后由 systemd 发 SIGKILL。设太长会让 systemctl stop 卡住。
+TimeoutStopSec=60
 
 StandardOutput=journal
 StandardError=journal

@@ -15,18 +15,32 @@ data_dir: null
 # 留 null = 用 $CDSAPI_RC，再退回 ~/.cdsapirc
 cdsapirc: null
 
-# 并行 worker 数。CDS 对单账号有并发上限，建议 4—8，别开太大
+# 并行 worker 数。
+# ⚠️ CDS 的排队配额是**按数据集**算的（报错原文 "Number queued requests for
+#    this dataset is temporarily limited"）。任务表已按分组交错排列，
+#    所以 6 个 worker ≈ 每个数据集 2 个并发，正好吃满三份配额。
 workers: 6
 
-# 单个任务在 cdsswarm 内部的失败重试次数
-max_retries: 10
+# 单个任务在 cdsswarm 内部的失败重试次数。
+# 不宜大：每次重试都会重新提交请求，配额已满时只是反复撞墙、刷日志。
+# 把耐心留给外层轮次（5 分钟起步、指数退避到 1 小时；一旦有文件落盘就重置）。
+max_retries: 2
 
-# 外层轮次：一轮跑完后，对仍失败/被中断的任务再跑一轮，直到全部成功
-# 每次重跑都会自动 skip 已完成的文件、复用 CDS 上已提交的 job（不重新排队）
-max_rounds: 30
+# 外层轮次：一轮跑完后，对仍失败/被中断的任务再跑一轮，直到全部成功。
+# 每次重跑都会自动 skip 已完成的文件、并复用 CDS 上已提交的 job（不重新排队）。
+max_rounds: 60
 
 # 年份区间（含两端）
 years: [1981, 2025]
+
+# 每个请求包含几年。**这个值受 CDS 硬上限约束**（实测数据）：
+#     12 年 × 1 月 = 372 天 → 通过
+#     15 年 × 1 月 = 465 天 → "Your request is too large"
+#     20 年 × 1 月 = 620 天 → 拒绝
+#   frequency（1/3/6_hourly）不影响该上限，纯粹按"天数"算。
+# 取 12 可把请求数压到 4 块 × 4 月 × 3 组 = 48 个（year_batch=5 时是 108 个）。
+# 注意月份不合并：6 月没有 31 日，而一个请求只能给一份 day 列表。
+year_batch: 12
 
 # 月份（5—8 月暖季）
 months: [5, 6, 7, 8]
@@ -41,12 +55,19 @@ frequency: "1_hourly"
 # 下载分组。每个分组 = 一个 CDS 数据集 + 一套检索参数
 groups:
 
-  # ① 目标变量：长江中下游区域日最高气温（ERA5-Land，0.1°，仅陆地）
+  # ① 目标变量：长江中下游区域日最高气温
+  #
+  # source: openmeteo —— 走 Open-Meteo Archive API（ERA5-Land 日最高温）。
+  # 为什么不走 CDS：CDS 2026 年长期过载（全局排队 8000+、单账号还有排队配额），
+  #   实测一晚只落盘 2 个文件；而 ARCO-ERA5 的 Zarr 每 chunk 是全球一整层，
+  #   本区域只占 0.12%，逐小时取需 305 GB。Open-Meteo 免认证、免排队，
+  #   且提供的是同一产品（ERA5-Land daily temperature_2m_max）。
+  # 采样点：按 point_spacing 在区域内取规则网格，下游做 cos(lat) 面积加权平均。
   tmax:
-    dataset: derived-era5-land-daily-statistics
-    statistic: daily_maximum
-    variables: [2m_temperature]
-    area: [34, 110, 28, 122]        # 只下研究区，比大域小约 38 倍
+    source: openmeteo
+    variable: 2m_temperature
+    point_spacing: 0.25             # 25×49 = 1225 个点
+    area: [34, 110, 28, 122]        # 只下研究区
 
   # ② 大尺度单层要素：SST + 海平面气压（需要大域才能看到副高与太平洋海温）
   sst_mslp:
