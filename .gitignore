@@ -18,3 +18,9 @@ cache/
 
 # Virtual environments
 .venv
+
+# 部署/调试临时目录（绝不应入库）
+.chk/
+.deploy_tmp/
+.mintest/
+.uvcache/

@@ -48,9 +48,13 @@ import xarray as xr
 API = "https://archive-api.open-meteo.com/v1/archive"
 MIN_VALID_BYTES = 1024
 
-# 实测：点数 × 天数超过约 5e5 会被 400 拒绝；429 是每分钟限流
-MAX_VALUES_PER_REQUEST = 400_000
-SLEEP_BETWEEN = 13.0
+# 实测到的两条硬约束：
+#   1) URL 过长会被 nginx 挡（HTTP 414）—— 1225 个点对约 15 KB，超出 8 KB 上限
+#   2) 点数 × 天数超过约 5e5 会被 400 拒绝（"requests too much data"）
+#   3) 429 是每分钟限流，需要退避
+MAX_POINTS_PER_REQUEST = 250      # URL 安全上限（实测 600 点仍触发 nginx 414，8KB 限制）
+MAX_VALUES_PER_REQUEST = 300_000  # 数据量安全上限
+SLEEP_BETWEEN = 3.0
 RETRY_429_WAIT = 65.0
 MAX_RETRIES = 5
 
@@ -94,6 +98,12 @@ def expand_pairs(lats: np.ndarray, lons: np.ndarray) -> tuple[list, list]:
     return pair_lats, pair_lons
 
 
+def _seconds_to_next_hour() -> float:
+    """距离下一个整点的秒数。Open-Meteo 的小时配额按整点重置。"""
+    now = time.time()
+    return 3600.0 - (now % 3600.0)
+
+
 def _request(lats: list[float], lons: list[float], start: str, end: str) -> dict:
     params = {
         "latitude": ",".join(str(x) for x in lats),
@@ -114,7 +124,13 @@ def _request(lats: list[float], lons: list[float], start: str, end: str) -> dict
             body = exc.read().decode()[:160]
             last = f"HTTP {exc.code}: {body}"
             if exc.code == 429:
-                time.sleep(RETRY_429_WAIT)
+                # 两种限流：分钟级（等一分钟）和**小时级**（等到下一个整点）
+                if "Hourly" in body or "hour" in body.lower():
+                    wait = _seconds_to_next_hour() + 30
+                    log(f"    ⏳ 触发小时级限流，等待 {wait:.0f}s 到下一个整点")
+                    time.sleep(wait)
+                else:
+                    time.sleep(RETRY_429_WAIT)
             elif exc.code == 400:
                 raise RuntimeError("请求过大，需要减小分块: " + body) from exc
             else:
@@ -153,67 +169,71 @@ def fetch_group(cfg: dict, group: dict, logfile: Path | None = None,
             f"≈ {len(months)*31*npts/1000:.0f}k 数值", logfile)
         return tg
 
-    # 逐 (年块, 月) 组装；API 按"整年 + 暖季月份"取，最省请求数
-    per_year: dict[int, dict] = {}
-    for year in years:
-        start = f"{year}-{months[0]:02d}-01"
-        last_month = months[-1]
-        last_day = 31
-        end = f"{year}-{last_month:02d}-{last_day:02d}"
-        need = len(range(1, 32)) * len(months) * npts
-        if need > MAX_VALUES_PER_REQUEST:
-            raise RuntimeError(f"{year} 年请求过大（{need} 个数值），请调小 point_spacing")
-        log(f"    拉取 {year} ({start}~{end}, {npts} 点)...", logfile)
-        pair_lats, pair_lons = expand_pairs(lats, lons)
-        payload = _request(pair_lats, pair_lons, start, end)
-        per_year[year] = payload
-        time.sleep(SLEEP_BETWEEN)
+    # ---- 二维分块：点块 × 单年；**每完成一年立即写盘**
+    #
+    # 两个设计都是被实测教训逼出来的：
+    #   * Open-Meteo 的 start/end 是**连续区间**，写 7 年区间会返回 2300+ 天而非 7 个暖季
+    #   * 它是**每小时**限流；如果先把 45 年全拉进内存再写，一旦中途撞限流，
+    #     前面所有成功的请求全部作废（第一版就是这样白扔了 18 个请求）
+    # 所以：一年一个请求，一年一落盘。
+    point_chunks = [list(range(i, min(i + MAX_POINTS_PER_REQUEST, npts)))
+                    for i in range(0, npts, MAX_POINTS_PER_REQUEST)]
+    all_pairs_lat, all_pairs_lon = expand_pairs(lats, lons)
+    m0, m1 = months[0], months[-1]
+    log(f"    分块: {len(point_chunks)} 个点块 × {len(years)} 年 "
+        f"= {len(point_chunks)*len(years)} 个请求；每年一落盘", logfile)
 
     written: list[Path] = []
-    for block in blocks:
-        tag = f"{block[0]}-{block[-1]}" if len(block) > 1 else f"{block[0]}"
+    for year in years:
+        yseries: dict[int, dict[str, float]] = {}
+        for ci, chunk in enumerate(point_chunks, 1):
+            clats = [all_pairs_lat[i] for i in chunk]
+            clons = [all_pairs_lon[i] for i in chunk]
+            log(f"    {year} 点块{ci}/{len(point_chunks)} ({len(chunk)}点)", logfile)
+            payload = _request(clats, clons, f"{year}-{m0:02d}-01", f"{year}-{m1:02d}-31")
+            if isinstance(payload, dict):
+                payload = [payload]
+            for li, item in enumerate(payload):
+                d = item["daily"]
+                gi = chunk[li] if li < len(chunk) else chunk[-1]
+                b = yseries.setdefault(gi, {})
+                for ds_, v in zip(d["time"], d["temperature_2m_max"]):
+                    if v is not None:
+                        b[ds_] = v
+            time.sleep(SLEEP_BETWEEN)
+
+        # 该年数据到手 → 立刻写 4 个月的文件
         for month in months:
-            target = out_dir / f"{name}_{tag}_{month:02d}.nc"
-            if is_valid(target):
-                written.append(target)
+            dates = [f"{year}-{month:02d}-{d:02d}" for d in range(1, 32)
+                     if f"{year}-{month:02d}-{d:02d}" in yseries.get(0, {})]
+            if not dates:
                 continue
-            times, cube = [], []
-            for year in block:
-                payload = per_year[year]
-                if isinstance(payload, dict):
-                    payload = [payload]
-                # 多个点：返回 list，顺序与 lats×lons 的展平顺序一致
-                dailies = [p["daily"] for p in payload]
-                idx = [i for i, t in enumerate(dailies[0]["time"]) if t[7:10] == f"{month:02d}"]
-                if not idx:
+            grid = np.full((len(dates), len(lats), len(lons)), np.nan, dtype="float32")
+            for gi in range(npts):
+                b = yseries.get(gi)
+                if not b:
                     continue
-                times.extend(dailies[0]["time"][i] for i in idx)
-                # 每个点一条序列 → 展平为 (point)
-                series = np.array([[d["temperature_2m_max"][i] for i in idx] for d in dailies],
-                                  dtype="float32")           # (npts, ndays)
-                cube.append(series.T)                        # (ndays, npts)
-
-            if not cube:
-                continue
-            values = np.concatenate(cube, axis=0)            # (time, npts)
-            grid = values.reshape(len(times), len(lats), len(lons)) + 273.15   # ℃ → K
-
-            ds = xr.Dataset(
+                grid[:, gi // len(lons), gi % len(lons)] = np.array(
+                    [b.get(dt, np.nan) for dt in dates], dtype="float32")
+            grid += 273.15
+            target = out_dir / f"{name}_{year}_{month:02d}.nc"
+            dso = xr.Dataset(
                 {"t2m": (("time", "latitude", "longitude"), grid)},
-                coords={"time": pd.to_datetime(times), "latitude": lats, "longitude": lons},
+                coords={"time": pd.to_datetime(dates),
+                        "latitude": lats, "longitude": lons},
                 attrs={
                     "source": "Open-Meteo Archive API (models=era5_land)",
                     "underlying_data": "ERA5-Land (0.1 deg) 2m_temperature daily maximum",
                     "time_zone": "Asia/Shanghai",
-                    "note": f"区域采样点 {npts} 个，间隔 {spacing} 度；下游按 cos(lat) 面积加权平均",
+                    "note": f"区域采样点 {npts} 个（间隔 {spacing} 度）；下游按 cos(lat) 面积加权平均",
                     "history": f"fetched {datetime.now():%Y-%m-%d %H:%M:%S}",
                 },
             )
-            enc = {"t2m": {"zlib": True, "complevel": 4, "dtype": "float32"}}
-            ds.to_netcdf(target, encoding=enc)
-            log(f"    ✓ {target.name}  {ds.sizes['time']}天 × {npts}点  "
-                f"{target.stat().st_size/1e6:.2f} MB", logfile)
+            dso.to_netcdf(target, encoding={"t2m": {"zlib": True, "complevel": 4,
+                                                    "dtype": "float32"}})
+            dso.close()
             written.append(target)
+        log(f"    ✓ {year} 年落盘完成（累计 {len(written)} 个文件）", logfile)
 
     return written
 

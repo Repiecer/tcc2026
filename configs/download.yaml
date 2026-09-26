@@ -66,7 +66,7 @@ groups:
   tmax:
     source: openmeteo
     variable: 2m_temperature
-    point_spacing: 0.25             # 25×49 = 1225 个点
+    point_spacing: 0.5              # 13×25 = 325 个点（API 的 URL 长度限制下最稳）
     area: [34, 110, 28, 122]        # 只下研究区
 
   # ② 大尺度单层要素：SST + 海平面气压（需要大域才能看到副高与太平洋海温）
@@ -75,6 +75,9 @@ groups:
     statistic: daily_mean
     variables: [sea_surface_temperature, mean_sea_level_pressure]
     area: [55, 70, 15, 140]
+    # CDS 的 cost = 天数 × 变量数 × 层数。单变量实测 372 天可过、465 天被拒，
+    # 这里 2 个变量 → 每年上限约 186 天 → 取 6 年/请求（186 天）。
+    year_batch: 6
 
   # ③ 环流要素：500/850 hPa 位势高度与风场
   circ:
@@ -83,6 +86,8 @@ groups:
     variables: [geopotential, u_component_of_wind, v_component_of_wind]
     pressure_level: ['500', '850']
     area: [55, 70, 15, 140]
+    # 3 变量 × 2 层 = 6 个字段 → 每年上限约 62 天 → 取 2 年/请求（62 天）
+    year_batch: 2
 
 # 说明：
 #  - 三个数据集都是"服务端算好的日统计量"，下载量比逐小时小 24 倍，

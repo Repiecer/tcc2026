@@ -141,15 +141,17 @@ def build_tasks(cfg: dict, only: list[str] | None = None) -> list[Any]:
 
     out_root = cfg["data_dir"] / "raw"
     per_group: list[list[Any]] = []
-    batch = max(1, int(cfg.get("year_batch", 1)))
     years = cfg["_years"]
-    year_blocks = [years[i:i + batch] for i in range(0, len(years), batch)]
+    default_batch = max(1, int(cfg.get("year_batch", 1)))
 
     for name, g in cfg["groups"].items():
         if only and name not in only:
             continue
         if "dataset" not in g:          # 走 openmeteo / arco 的分组不产生 CDS 任务
             continue
+        # CDS 的 cost limit = 天数 × 变量数 × 层数，所以每个分组的最优年块不同
+        batch = max(1, int(g.get("year_batch", default_batch)))
+        year_blocks = [years[i:i + batch] for i in range(0, len(years), batch)]
         group_tasks: list[Any] = []
         for block in year_blocks:
             for month in cfg["months"]:
