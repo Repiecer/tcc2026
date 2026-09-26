@@ -7,7 +7,6 @@ wheels/
 *.egg-info
 
 data/
-examples/
 
 # 下载缓存（cdsswarm 断点续传状态）
 cache/
