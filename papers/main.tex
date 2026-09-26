@@ -1,0 +1,199 @@
+% !TEX program = xelatex
+% 中文论文标准模板
+% 编译方式：XeLaTeX
+\documentclass[12pt, a4paper]{ctexart}
+
+% ==================== 页面设置 ====================
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing  % 1.5 倍行距；如需要双倍行距可改为 \doublespacing
+
+% ==================== 数学与符号 ====================
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{bm}
+
+% ==================== 图表 ====================
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf}
+
+% ==================== 参考文献 ====================
+\usepackage[numbers, sort&compress]{natbib}
+\bibliographystyle{plainnat}
+
+% ==================== 超链接 ====================
+\usepackage[colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue]{hyperref}
+
+% ==================== 定理环境 ====================
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{remark}[theorem]{注}
+
+% ==================== 自定义命令 ====================
+\newcommand{\keywords}[1]{\par\noindent\textbf{关键词：}#1}
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
+
+% ==================== 标题信息 ====================
+\title{\heiti 论文题目：基于 XXX 的 XXX 方法研究}
+\author{
+    张三\thanks{作者简介：张三，硕士研究生，主要研究方向为 XXX，E-mail: xxx@xxx.com。} \\
+    某某大学 某某学院，城市 邮编
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% ==================== 摘要 ====================
+\begin{abstract}
+    \noindent 这里是中文摘要。摘要应简要说明研究背景、目的、方法、主要结果和结论，一般 200--300 字。摘要中不应出现图表、公式和参考文献。
+
+    \vspace{1em}
+    \noindent\textbf{关键词：} 关键词1；关键词2；关键词3；关键词4
+
+    \vspace{1em}
+    \noindent\textbf{Abstract:} This is the English abstract. It should briefly describe the background, objective, methods, main results and conclusions of the paper.
+
+    \vspace{0.5em}
+    \noindent\textbf{Keywords:} keyword1; keyword2; keyword3; keyword4
+\end{abstract}
+
+\vspace{1em}
+
+% ==================== 正文 ====================
+\section{引言}
+\label{sec:introduction}
+
+近年来，XXX 问题受到了广泛关注\upcite{ref1}。然而，现有方法仍存在 XXX 不足。本文针对该问题，提出了一种 XXX 方法。主要贡献如下：
+
+\begin{enumerate}
+    \item 提出了 XXX 模型；
+    \item 设计了 XXX 算法；
+    \item 在 XXX 数据集上验证了所提方法的有效性。
+\end{enumerate}
+
+\section{相关工作}
+\label{sec:related}
+
+\subsection{XXX 方法}
+XXX 方法最早由 Smith 等人提出\upcite{ref2}。该方法通过 XXX 实现 XXX，但计算复杂度较高。
+
+\subsection{XXX 方法}
+针对上述问题，Li 等人提出了 XXX 改进方案\upcite{ref3}。
+
+\section{问题描述与预备知识}
+\label{sec:preliminaries}
+
+\subsection{问题定义}
+设数据集为 $\mathcal{D} = \{(\bm{x}_i, y_i)\}_{i=1}^{N}$，其中 $\bm{x}_i \in \mathbb{R}^d$ 为第 $i$ 个样本的特征向量，$y_i \in \{0,1\}$ 为对应标签。目标是学习一个映射 $f: \mathbb{R}^d \rightarrow \{0,1\}$，使得预测误差最小。
+
+\subsection{符号说明}
+本文使用的主要符号如表~\ref{tab:symbols} 所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{符号说明}
+    \label{tab:symbols}
+    \begin{tabular}{cl}
+        \toprule
+        符号            & 含义             \\
+        \midrule
+        $\bm{x}_i$    & 第 $i$ 个样本的特征向量 \\
+        $y_i$         & 第 $i$ 个样本的标签   \\
+        $N$           & 样本总数           \\
+        $d$           & 特征维度           \\
+        $\mathcal{L}$ & 损失函数           \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{方法}
+\label{sec:method}
+
+\subsection{模型框架}
+本文提出的模型框架如图~\ref{fig:framework} 所示。
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/framework.pdf}
+    \fbox{\parbox[c][5cm][c]{0.8\textwidth}{\centering 此处插入图片：figures/framework.pdf}}
+    \caption{模型框架图}
+    \label{fig:framework}
+\end{figure}
+
+\subsection{目标函数}
+模型的目标函数定义为
+\begin{equation}
+    \label{eq:objective}
+    \min_{\bm{\theta}} \mathcal{L}(\bm{\theta}) = \frac{1}{N} \sum_{i=1}^{N} \ell(f(\bm{x}_i; \bm{\theta}), y_i) + \lambda \|\bm{\theta}\|_2^2,
+\end{equation}
+其中，$\bm{\theta}$ 为模型参数，$\ell(\cdot)$ 为损失函数，$\lambda > 0$ 为正则化系数。
+
+\subsection{优化算法}
+目标函数~\eqref{eq:objective} 可通过梯度下降法求解：
+\begin{equation}
+    \bm{\theta}_{t+1} = \bm{\theta}_t - \eta \nabla_{\bm{\theta}} \mathcal{L}(\bm{\theta}_t),
+\end{equation}
+其中 $\eta$ 为学习率。
+
+\section{实验}
+\label{sec:experiments}
+
+\subsection{数据集}
+实验采用 XXX 和 XXX 两个公开数据集，具体统计信息如表~\ref{tab:datasets} 所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{数据集统计信息}
+    \label{tab:datasets}
+    \begin{tabular}{lccc}
+        \toprule
+        数据集       & 样本数  & 特征数 & 类别数 \\
+        \midrule
+        Dataset A & 1000 & 20  & 2   \\
+        Dataset B & 5000 & 50  & 5   \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{实验设置}
+实验环境为 Python 3.9 + PyTorch 1.12，学习率设为 0.01，批量大小设为 64，迭代次数为 100。
+
+\subsection{实验结果与分析}
+不同方法在数据集上的实验结果如表~\ref{tab:results} 所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{不同方法的性能对比}
+    \label{tab:results}
+    \begin{tabular}{lcc}
+        \toprule
+        方法            & 准确率（\%）       & F1 值（\%）      \\
+        \midrule
+        方法 A          & 85.2          & 84.7          \\
+        方法 B          & 87.6          & 86.9          \\
+        \textbf{本文方法} & \textbf{90.3} & \textbf{89.8} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+由表~\ref{tab:results} 可知，本文方法在准确率和 F1 值上均优于对比方法。
+
+\section{结论}
+\label{sec:conclusion}
+
+本文针对 XXX 问题，提出了一种 XXX 方法。实验结果表明，所提方法在 XXX 数据集上取得了较好的性能。未来工作将围绕 XXX 展开进一步研究。
+
+% ==================== 致谢 ====================
+\section*{致谢}
+感谢 XXX 对本研究的支持。
+
+% ==================== 参考文献 ====================
+\bibliography{references}
+
+\end{document}
