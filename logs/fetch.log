@@ -1,0 +1,808 @@
+2026-09-29 14:06:58 INFO    z500  源=planette  年=1981-2025  月=[3, 4, 5, 6, 7, 8]
+2026-09-29 14:08:14 INFO    z500  源=planette  年=1981-2025  月=[3, 4, 5, 6, 7, 8]
+2026-09-29 14:24:32 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-29 14:24:59 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-29 14:25:37 INFO    写出 z500_1981.nc  (34.7 MB, 123 天)
+2026-09-29 14:26:14 INFO    写出 z500_1982.nc  (34.8 MB, 123 天)
+2026-09-29 14:26:47 INFO    写出 z500_1983.nc  (34.7 MB, 123 天)
+2026-09-29 14:27:24 INFO    写出 z500_1984.nc  (34.6 MB, 123 天)
+2026-09-29 14:28:00 INFO    写出 z500_1985.nc  (34.7 MB, 123 天)
+2026-09-29 14:29:08 INFO    写出 z500_1986.nc  (34.9 MB, 123 天)
+2026-09-29 14:29:48 INFO    写出 z500_1987.nc  (34.8 MB, 123 天)
+2026-09-29 14:30:24 INFO    写出 z500_1988.nc  (34.8 MB, 123 天)
+2026-09-29 14:30:58 INFO    写出 z500_1989.nc  (35.0 MB, 123 天)
+2026-09-29 14:32:09 INFO    写出 z500_1990.nc  (35.0 MB, 123 天)
+2026-09-29 14:35:05 INFO    写出 z500_1991.nc  (35.0 MB, 123 天)
+2026-09-29 14:36:27 INFO    写出 z500_1992.nc  (34.8 MB, 123 天)
+2026-09-29 14:37:06 INFO    写出 z500_1993.nc  (34.8 MB, 123 天)
+2026-09-29 14:37:39 INFO    写出 z500_1994.nc  (34.9 MB, 123 天)
+2026-09-29 14:38:11 INFO    写出 z500_1995.nc  (34.8 MB, 123 天)
+2026-09-29 14:38:46 INFO    写出 z500_1996.nc  (34.8 MB, 123 天)
+2026-09-29 14:39:24 INFO    写出 z500_1997.nc  (35.0 MB, 123 天)
+2026-09-29 14:39:58 INFO    写出 z500_1998.nc  (34.8 MB, 123 天)
+2026-09-29 14:40:30 INFO    写出 z500_1999.nc  (34.8 MB, 123 天)
+2026-09-29 14:41:03 INFO    写出 z500_2000.nc  (34.9 MB, 123 天)
+2026-09-29 14:42:49 ERROR   2001 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=84S1JMQXAPXJPYNKQXVG range=0..91547057
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/745/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:44:36 ERROR   2002 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=Y0JTYEAP46W5QJ2X0P80 range=0..91507673
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/756/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:46:23 ERROR   2003 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=0K9S0M8BDR64X7M50NSG range=0..91427429
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/767/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:48:09 ERROR   2004 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=SN24R79KJRXMC2QZ25G0 range=0..91260856
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/783/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:49:56 ERROR   2005 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=XKVG4WMF3EG87MY5TCEG range=0..91499194
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/793/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:51:43 ERROR   2006 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=3P2TCK0W6VGAZNWJXB00 range=0..91071179
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/807/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:53:29 ERROR   2007 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=QH4CGPXTTK6VRVEXMRB0 range=0..90542201
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/820/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:55:16 ERROR   2008 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=8XXYQA2PNJ0GAFFRCVK0 range=0..91446387
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/829/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:57:02 ERROR   2009 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=0S49Z02C8CB876A9GJ2G range=0..91398889
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/843/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 14:58:49 ERROR   2010 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=PAES0XJ1W2Y6KM6QSYDG range=0..91049951
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/853/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:00:36 ERROR   2011 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=CATGRYVYAR1KFZX62BS0 range=0..91722711
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/865/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:02:22 ERROR   2012 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=M1V1YY9PDWZ8QK7JXFG0 range=0..90628541
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/881/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:04:09 ERROR   2013 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=YXA37SVJXA53T5WZVQ00 range=0..91364525
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/889/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:05:55 ERROR   2014 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=B7K69ZDP97SQQ4XSMD60 range=0..91138387
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/904/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:07:42 ERROR   2015 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=P48SYWJDA5M7V23Y7X8G range=0..90895851
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/917/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:09:29 ERROR   2016 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=2KZ47CZPNSFDXGRQMFXG range=0..91069366
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/930/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:11:15 ERROR   2017 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=QM1AXH6Q3H1MTCDW2V60 range=0..91143402
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/939/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:13:02 ERROR   2018 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=7V1DDMTAA0274J0BTQHG range=0..91487482
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/951/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:14:49 ERROR   2019 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=GHFB31QCH7F60NCXR3TG range=0..90978143
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/965/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:16:35 ERROR   2020 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=9WGBEAZ5GW4BT1AW4G1G range=0..91178850
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/976/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:18:22 ERROR   2021 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=1EXX03M7SD56JCPQWPHG range=0..90666030
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/991/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:20:09 ERROR   2022 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=NZJRJTGGZFPFBPTKKPJG range=0..90580945
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/1002/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:21:55 ERROR   2023 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=PW9BVMMRV5P2S8J7G940 range=0..91361462
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/1012/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:23:42 ERROR   2024 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=DD1TXS914XE7NKPY0710 range=0..91289762
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/1027/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:25:29 ERROR   2025 失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::asset_manager::fetch_chunk
+           with chunk_id=70SRGR6T4FE7XKPN79ZG range=0..91225705
+             at icechunk/src/asset_manager.rs:963
+   1: icechunk::store::get
+           with key="pressure/0p25latx0p25lon/z/c/1035/5/0/0" byte_range=From(0)
+             at icechunk/src/store.rs:183
+2026-09-29 15:25:30 INFO    完成：新下载 20，跳过 0，失败 25
+2026-09-29 15:38:59 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-29 15:39:42 ERROR   失败：object store error dispatch failure: io error: client error (Connect): tls handshake eof
+
+context:
+   0: icechunk::refs::fetch_branch
+           with name="main"
+             at icechunk/src/refs.rs:458
+   1: icechunk::refs::fetch_branch_tip_v1
+           with name="main"
+             at icechunk/src/refs.rs:479
+   2: icechunk::repository::fetch_spec_version
+             at icechunk/src/repository.rs:539
+2026-09-29 15:39:42 ERROR   若提示 Network is unreachable，说明当前环境连不到该主机；请在你自己能上网的终端里重跑。
+2026-09-29 22:18:52 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-29 22:19:01 INFO    跳过 z500_1981.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1982.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1983.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1984.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1985.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1986.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1987.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1988.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1989.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1990.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1991.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1992.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1993.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1994.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1995.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1996.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1997.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1998.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_1999.nc（已存在）
+2026-09-29 22:19:01 INFO    跳过 z500_2000.nc（已存在）
+2026-09-29 22:22:28 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-29 22:22:33 INFO    跳过 z500_1981.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1982.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1983.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1984.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1985.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1986.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1987.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1988.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1989.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1990.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1991.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1992.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1993.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1994.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1995.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1996.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1997.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1998.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_1999.nc（已存在）
+2026-09-29 22:22:33 INFO    跳过 z500_2000.nc（已存在）
+2026-09-29 22:24:33 INFO    写出 z500_2001.nc  (35.0 MB, 123 天)
+2026-09-29 22:25:18 INFO    写出 z500_2002.nc  (34.9 MB, 123 天)
+2026-09-29 22:26:15 INFO    写出 z500_2003.nc  (34.9 MB, 123 天)
+2026-09-29 22:27:00 INFO    写出 z500_2004.nc  (35.2 MB, 123 天)
+2026-09-29 22:27:44 INFO    写出 z500_2005.nc  (34.9 MB, 123 天)
+2026-09-29 22:30:24 INFO    写出 z500_2006.nc  (35.0 MB, 123 天)
+2026-09-29 22:31:07 INFO    写出 z500_2007.nc  (35.0 MB, 123 天)
+2026-09-29 22:31:57 INFO    写出 z500_2008.nc  (34.9 MB, 123 天)
+2026-09-29 22:32:54 INFO    写出 z500_2009.nc  (35.1 MB, 123 天)
+2026-09-29 22:33:39 INFO    写出 z500_2010.nc  (35.0 MB, 123 天)
+2026-09-29 22:34:31 INFO    写出 z500_2011.nc  (35.0 MB, 123 天)
+2026-09-29 22:35:16 INFO    写出 z500_2012.nc  (35.1 MB, 123 天)
+2026-09-29 22:35:57 INFO    写出 z500_2013.nc  (35.0 MB, 123 天)
+2026-09-29 22:36:43 INFO    写出 z500_2014.nc  (35.0 MB, 123 天)
+2026-09-29 22:37:25 INFO    写出 z500_2015.nc  (35.1 MB, 123 天)
+2026-09-29 22:38:09 INFO    写出 z500_2016.nc  (35.1 MB, 123 天)
+2026-09-29 22:39:03 INFO    写出 z500_2017.nc  (35.0 MB, 123 天)
+2026-09-29 22:39:59 INFO    写出 z500_2018.nc  (35.0 MB, 123 天)
+2026-09-29 22:41:18 INFO    写出 z500_2019.nc  (35.1 MB, 123 天)
+2026-09-29 22:42:10 INFO    写出 z500_2020.nc  (35.0 MB, 123 天)
+2026-09-29 22:42:53 INFO    写出 z500_2021.nc  (35.0 MB, 123 天)
+2026-09-29 22:43:34 INFO    写出 z500_2022.nc  (35.1 MB, 123 天)
+2026-09-29 22:44:18 INFO    写出 z500_2023.nc  (35.1 MB, 123 天)
+2026-09-29 22:44:59 INFO    写出 z500_2024.nc  (35.1 MB, 123 天)
+2026-09-29 22:45:40 INFO    写出 z500_2025.nc  (35.1 MB, 123 天)
+2026-09-29 22:45:41 INFO    完成：新下载 25，跳过 20，失败 0
+2026-09-30 09:01:14 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:01:50 INFO    写出 swvl1_1981.nc  (0.1 MB, 123 天)
+2026-09-30 09:02:29 INFO    写出 swvl1_1982.nc  (0.1 MB, 123 天)
+2026-09-30 09:03:05 INFO    写出 swvl1_1983.nc  (0.1 MB, 123 天)
+2026-09-30 09:03:40 INFO    写出 swvl1_1984.nc  (0.1 MB, 123 天)
+2026-09-30 09:04:15 INFO    写出 swvl1_1985.nc  (0.1 MB, 123 天)
+2026-09-30 09:06:34 INFO    写出 swvl1_1986.nc  (0.1 MB, 123 天)
+2026-09-30 09:07:19 INFO    写出 swvl1_1987.nc  (0.1 MB, 123 天)
+2026-09-30 09:07:48 INFO    写出 swvl1_1988.nc  (0.1 MB, 123 天)
+2026-09-30 09:08:22 INFO    写出 swvl1_1989.nc  (0.1 MB, 123 天)
+2026-09-30 09:08:51 INFO    写出 swvl1_1990.nc  (0.1 MB, 123 天)
+2026-09-30 09:09:26 INFO    写出 swvl1_1991.nc  (0.1 MB, 123 天)
+2026-09-30 09:09:54 INFO    写出 swvl1_1992.nc  (0.1 MB, 123 天)
+2026-09-30 09:10:49 INFO    写出 swvl1_1993.nc  (0.1 MB, 123 天)
+2026-09-30 09:11:17 INFO    写出 swvl1_1994.nc  (0.1 MB, 123 天)
+2026-09-30 09:11:46 INFO    写出 swvl1_1995.nc  (0.1 MB, 123 天)
+2026-09-30 09:12:22 INFO    写出 swvl1_1996.nc  (0.1 MB, 123 天)
+2026-09-30 09:12:50 INFO    写出 swvl1_1997.nc  (0.1 MB, 123 天)
+2026-09-30 09:13:25 INFO    写出 swvl1_1998.nc  (0.1 MB, 123 天)
+2026-09-30 09:13:55 INFO    写出 swvl1_1999.nc  (0.1 MB, 123 天)
+2026-09-30 09:14:30 INFO    写出 swvl1_2000.nc  (0.1 MB, 123 天)
+2026-09-30 09:15:38 ERROR   2001 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:16:33 ERROR   2002 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:17:17 INFO    swvl1  源=openmeteo  年=1981-1982  月=[5, 6, 7, 8]
+2026-09-30 09:17:28 ERROR   2003 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:17:29 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:17:54 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:17:54 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:18:23 ERROR   2004 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:18:48 ERROR   失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:18:48 ERROR   若提示 Network is unreachable，说明当前环境连不到该主机；请在你自己能上网的终端里重跑。
+2026-09-30 09:18:49 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:19:17 ERROR   2005 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:19:44 ERROR   失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:19:44 ERROR   若提示 Network is unreachable，说明当前环境连不到该主机；请在你自己能上网的终端里重跑。
+2026-09-30 09:20:12 ERROR   2006 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:21:02 INFO    写出 swvl1_2007.nc  (0.1 MB, 123 天)
+2026-09-30 09:22:09 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:22:42 INFO    写出 d2m_1981.nc  (0.1 MB, 123 天)
+2026-09-30 09:23:16 INFO    写出 d2m_1982.nc  (0.1 MB, 123 天)
+2026-09-30 09:23:51 INFO    写出 d2m_1983.nc  (0.1 MB, 123 天)
+2026-09-30 09:24:24 INFO    写出 d2m_1984.nc  (0.1 MB, 123 天)
+2026-09-30 09:24:57 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:24:57 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:24:58 INFO    写出 d2m_1985.nc  (0.1 MB, 123 天)
+2026-09-30 09:25:08 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:25:09 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:25:10 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:25:11 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:25:12 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 09:25:31 INFO    写出 d2m_1986.nc  (0.1 MB, 123 天)
+2026-09-30 09:26:04 INFO    写出 d2m_1987.nc  (0.1 MB, 123 天)
+2026-09-30 09:26:37 INFO    写出 d2m_1988.nc  (0.1 MB, 123 天)
+2026-09-30 09:27:10 INFO    写出 d2m_1989.nc  (0.1 MB, 123 天)
+2026-09-30 09:27:44 INFO    写出 d2m_1990.nc  (0.1 MB, 123 天)
+2026-09-30 09:28:19 INFO    写出 d2m_1991.nc  (0.1 MB, 123 天)
+2026-09-30 09:28:53 INFO    写出 d2m_1992.nc  (0.1 MB, 123 天)
+2026-09-30 09:30:14 ERROR   1993 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:31:09 ERROR   1994 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:32:04 ERROR   1995 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:32:58 ERROR   1996 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:33:53 ERROR   1997 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:34:48 ERROR   1998 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:35:43 ERROR   1999 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:36:38 ERROR   2000 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:37:32 ERROR   2001 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:38:27 ERROR   2002 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:39:22 ERROR   2003 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:40:16 ERROR   2004 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:41:11 ERROR   2005 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:42:05 ERROR   2006 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:43:00 ERROR   2007 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:43:54 ERROR   2008 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 09:44:49 ERROR   2009 失败：下载失败: https://archive-api.open-meteo.com/v1/archive
+2026-09-30 10:01:49 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:01:49 INFO    跳过 swvl1_1981.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1982.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1983.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1984.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1985.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1986.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1987.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1988.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1989.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1990.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1991.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1992.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1993.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1994.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1995.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1996.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1997.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1998.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_1999.nc（已存在）
+2026-09-30 10:01:49 INFO    跳过 swvl1_2000.nc（已存在）
+2026-09-30 10:19:44 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:19:44 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:33 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:33 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:33 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:34 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:34 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:34 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:35 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:35 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:35 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:36 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:44 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:20:54 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:15 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:15 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:16 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:16 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:17 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:17 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:18 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:18 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:18 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:19 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:36 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:37 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:37 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:38 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:38 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:39 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:39 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:40 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:40 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:40 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:32:41 INFO    slhtf  源=openmeteo  年=1981-2025  月=[3, 4, 5, 6, 7, 8]
+2026-09-30 10:33:55 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:33:56 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:33:57 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:33:57 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:33:58 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:33:59 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:00 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:00 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:01 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:02 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:11 INFO    tp  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:12 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:13 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:14 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:15 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:15 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:16 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:17 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:18 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:18 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:30 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:40 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:34:41 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:49:00 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 10:49:00 INFO    跳过 d2m_1981.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1982.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1983.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1984.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1985.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1986.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1987.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1988.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1989.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1990.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1991.nc（已存在）
+2026-09-30 10:49:00 INFO    跳过 d2m_1992.nc（已存在）
+2026-09-30 11:11:57 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 11:11:57 INFO    跳过 d2m_1981.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1982.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1983.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1984.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1985.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1986.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1987.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1988.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1989.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1990.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1991.nc（已存在）
+2026-09-30 11:11:57 INFO    跳过 d2m_1992.nc（已存在）
+2026-09-30 13:26:55 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 13:26:55 INFO    跳过 d2m_1981.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1982.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1983.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1984.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1985.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1986.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1987.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1988.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1989.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1990.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1991.nc（已存在）
+2026-09-30 13:26:55 INFO    跳过 d2m_1992.nc（已存在）
+2026-09-30 13:27:18 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 13:27:18 INFO    跳过 swvl1_1981.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1982.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1983.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1984.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1985.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1986.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1987.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1988.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1989.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1990.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1991.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1992.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1993.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1994.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1995.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1996.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1997.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1998.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_1999.nc（已存在）
+2026-09-30 13:27:18 INFO    跳过 swvl1_2000.nc（已存在）
+2026-09-30 13:48:30 INFO    swvl1  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 13:48:30 INFO    跳过 swvl1_1981.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1982.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1983.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1984.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1985.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1986.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1987.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1988.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1989.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1990.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1991.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1992.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1993.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1994.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1995.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1996.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1997.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1998.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_1999.nc（已存在）
+2026-09-30 13:48:30 INFO    跳过 swvl1_2000.nc（已存在）
+2026-09-30 13:48:35 INFO    d2m  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 13:48:35 INFO    跳过 d2m_1981.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1982.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1983.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1984.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1985.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1986.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1987.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1988.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1989.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1990.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1991.nc（已存在）
+2026-09-30 13:48:35 INFO    跳过 d2m_1992.nc（已存在）
+2026-09-30 14:26:26 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:28:45 INFO    写出 z200_1981.nc  (32.9 MB, 123 天)
+2026-09-30 14:30:03 INFO    写出 z200_1982.nc  (33.1 MB, 123 天)
+2026-09-30 14:31:02 INFO    写出 z200_1983.nc  (33.0 MB, 123 天)
+2026-09-30 14:31:58 INFO    写出 z200_1984.nc  (32.8 MB, 123 天)
+2026-09-30 14:33:01 INFO    写出 z200_1985.nc  (32.9 MB, 123 天)
+2026-09-30 14:33:54 INFO    写出 z200_1986.nc  (33.0 MB, 123 天)
+2026-09-30 14:34:27 INFO    写出 z200_1987.nc  (33.1 MB, 123 天)
+2026-09-30 14:35:02 INFO    写出 z200_1988.nc  (32.9 MB, 123 天)
+2026-09-30 14:36:36 INFO    写出 z200_1989.nc  (33.0 MB, 123 天)
+2026-09-30 14:37:15 INFO    写出 z200_1990.nc  (33.0 MB, 123 天)
+2026-09-30 14:38:08 INFO    写出 z200_1991.nc  (33.0 MB, 123 天)
+2026-09-30 14:39:06 INFO    写出 z200_1992.nc  (33.0 MB, 123 天)
+2026-09-30 14:39:47 INFO    写出 z200_1993.nc  (32.9 MB, 123 天)
+2026-09-30 14:40:27 INFO    写出 z200_1994.nc  (33.0 MB, 123 天)
+2026-09-30 14:41:06 INFO    写出 z200_1995.nc  (33.0 MB, 123 天)
+2026-09-30 14:41:45 INFO    写出 z200_1996.nc  (32.8 MB, 123 天)
+2026-09-30 14:42:24 INFO    写出 z200_1997.nc  (33.0 MB, 123 天)
+2026-09-30 14:43:04 INFO    写出 z200_1998.nc  (33.1 MB, 123 天)
+2026-09-30 14:43:45 INFO    写出 z200_1999.nc  (32.9 MB, 123 天)
+2026-09-30 14:43:46 INFO    swvl1  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:43:46 INFO    d2m  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:43:47 INFO    tp  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:43:53 INFO    d2m  源=planette  年=1981-1981  月=[5, 6, 7, 8]
+2026-09-30 14:44:54 INFO    写出 z200_2000.nc  (33.0 MB, 123 天)
+2026-09-30 14:45:05 INFO    写出 d2m_1981.nc  (0.3 MB, 123 天)
+2026-09-30 14:45:07 INFO    tp  源=planette  年=1981-1981  月=[5, 6, 7, 8]
+2026-09-30 14:46:01 INFO    写出 z200_2001.nc  (33.0 MB, 123 天)
+2026-09-30 14:46:17 INFO    写出 tp_1981.nc  (0.4 MB, 123 天)
+2026-09-30 14:46:47 INFO    写出 z200_2002.nc  (32.9 MB, 123 天)
+2026-09-30 14:46:57 INFO    swvl1  源=planette  年=1981-1981  月=[5, 6, 7, 8]
+2026-09-30 14:47:46 INFO    写出 z200_2003.nc  (32.9 MB, 123 天)
+2026-09-30 14:47:47 INFO    写出 swvl1_1981.nc  (0.5 MB, 123 天)
+2026-09-30 14:47:50 INFO    swvl1  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:51 INFO    d2m  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:52 INFO    tp  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:53 INFO    z500  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:54 INFO    z200  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:55 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:56 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:57 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:58 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:47:59 INFO    slhtf  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:48:26 INFO    写出 z200_2004.nc  (33.1 MB, 123 天)
+2026-09-30 14:49:22 INFO    写出 z200_2005.nc  (33.0 MB, 123 天)
+2026-09-30 14:50:16 INFO    写出 z200_2006.nc  (33.0 MB, 123 天)
+2026-09-30 14:50:59 INFO    写出 z200_2007.nc  (33.1 MB, 123 天)
+2026-09-30 14:51:49 INFO    写出 z200_2008.nc  (33.1 MB, 123 天)
+2026-09-30 14:52:40 INFO    写出 z200_2009.nc  (33.1 MB, 123 天)
+2026-09-30 14:53:30 INFO    写出 z200_2010.nc  (33.2 MB, 123 天)
+2026-09-30 14:54:18 INFO    写出 z200_2011.nc  (33.0 MB, 123 天)
+2026-09-30 14:55:09 INFO    写出 z200_2012.nc  (33.1 MB, 123 天)
+2026-09-30 14:55:58 INFO    写出 z200_2013.nc  (33.0 MB, 123 天)
+2026-09-30 14:56:47 INFO    写出 z200_2014.nc  (33.0 MB, 123 天)
+2026-09-30 14:56:51 INFO    tp  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:57:01 INFO    跳过 tp_1981.nc（已存在）
+2026-09-30 14:57:37 INFO    swvl1  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:57:46 INFO    跳过 swvl1_1981.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1982.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1983.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1984.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1985.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1986.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1987.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1988.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1989.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1990.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1991.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1992.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1993.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1994.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1995.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1996.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1997.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1998.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_1999.nc（已存在）
+2026-09-30 14:57:46 INFO    跳过 swvl1_2000.nc（已存在）
+2026-09-30 14:58:21 INFO    写出 z200_2015.nc  (33.0 MB, 123 天)
+2026-09-30 14:58:22 INFO    d2m  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 14:58:25 INFO    写出 tp_1982.nc  (0.5 MB, 123 天)
+2026-09-30 14:58:46 INFO    跳过 d2m_1981.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1982.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1983.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1984.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1985.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1986.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1987.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1988.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1989.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1990.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1991.nc（已存在）
+2026-09-30 14:58:46 INFO    跳过 d2m_1992.nc（已存在）
+2026-09-30 14:59:09 INFO    t850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 15:00:52 INFO    写出 d2m_1993.nc  (0.3 MB, 123 天)
+2026-09-30 15:00:53 INFO    写出 swvl1_2001.nc  (0.5 MB, 123 天)
+2026-09-30 15:01:29 INFO    写出 t850_1981.nc  (39.6 MB, 123 天)
+2026-09-30 15:02:17 INFO    u850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 15:02:26 INFO    v850  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 15:03:48 INFO    写出 z200_2016.nc  (33.1 MB, 123 天)
+2026-09-30 15:03:50 INFO    写出 d2m_1994.nc  (0.3 MB, 123 天)
+2026-09-30 15:05:13 INFO    写出 d2m_1995.nc  (0.3 MB, 123 天)
+2026-09-30 15:05:23 INFO    写出 tp_1983.nc  (0.5 MB, 123 天)
+2026-09-30 15:05:50 INFO    写出 swvl1_2002.nc  (0.5 MB, 123 天)
+2026-09-30 15:06:55 INFO    写出 d2m_1996.nc  (0.3 MB, 123 天)
+2026-09-30 15:06:58 INFO    写出 tp_1984.nc  (0.5 MB, 123 天)
+2026-09-30 15:07:00 INFO    写出 z200_2017.nc  (32.9 MB, 123 天)
+2026-09-30 15:07:00 INFO    写出 t850_1982.nc  (39.7 MB, 123 天)
+2026-09-30 15:07:50 INFO    写出 swvl1_2003.nc  (0.5 MB, 123 天)
+2026-09-30 15:08:56 INFO    写出 u850_1981.nc  (59.1 MB, 123 天)
+2026-09-30 15:09:32 INFO    写出 d2m_1997.nc  (0.3 MB, 123 天)
+2026-09-30 15:09:33 INFO    写出 tp_1985.nc  (0.5 MB, 123 天)
+2026-09-30 15:09:33 INFO    写出 z200_2018.nc  (33.0 MB, 123 天)
+2026-09-30 15:09:34 INFO    写出 t850_1983.nc  (39.6 MB, 123 天)
+2026-09-30 15:10:18 INFO    写出 swvl1_2004.nc  (0.5 MB, 123 天)
+2026-09-30 15:12:43 INFO    写出 v850_1981.nc  (60.7 MB, 123 天)
+2026-09-30 15:13:01 INFO    写出 z200_2019.nc  (33.1 MB, 123 天)
+2026-09-30 15:13:19 INFO    写出 swvl1_2005.nc  (0.5 MB, 123 天)
+2026-09-30 15:13:24 INFO    写出 u850_1982.nc  (59.2 MB, 123 天)
+2026-09-30 15:15:36 INFO    写出 d2m_1998.nc  (0.3 MB, 123 天)
+2026-09-30 15:15:49 INFO    写出 t850_1984.nc  (39.6 MB, 123 天)
+2026-09-30 15:16:15 INFO    写出 tp_1986.nc  (0.4 MB, 123 天)
+2026-09-30 15:16:24 INFO    写出 swvl1_2006.nc  (0.5 MB, 123 天)
+2026-09-30 15:16:25 INFO    跳过 swvl1_2007.nc（已存在）
+2026-09-30 15:19:29 INFO    写出 tp_1987.nc  (0.5 MB, 123 天)
+2026-09-30 15:19:38 INFO    写出 swvl1_2008.nc  (0.5 MB, 123 天)
+2026-09-30 15:21:19 INFO    写出 t850_1985.nc  (39.7 MB, 123 天)
+2026-09-30 15:21:54 INFO    写出 tp_1988.nc  (0.5 MB, 123 天)
+2026-09-30 15:21:59 INFO    写出 swvl1_2009.nc  (0.5 MB, 123 天)
+2026-09-30 15:22:02 INFO    写出 u850_1983.nc  (59.0 MB, 123 天)
+2026-09-30 15:22:51 INFO    写出 d2m_1999.nc  (0.3 MB, 123 天)
+2026-09-30 15:22:54 INFO    写出 z200_2020.nc  (32.9 MB, 123 天)
+2026-09-30 15:25:32 INFO    写出 t850_1986.nc  (39.7 MB, 123 天)
+2026-09-30 15:26:14 INFO    写出 t850_1987.nc  (39.7 MB, 123 天)
+2026-09-30 15:27:08 INFO    写出 t850_1988.nc  (39.7 MB, 123 天)
+2026-09-30 15:27:22 INFO    写出 swvl1_2010.nc  (0.5 MB, 123 天)
+2026-09-30 15:30:01 INFO    写出 t850_1989.nc  (39.6 MB, 123 天)
+2026-09-30 15:30:03 INFO    写出 d2m_2000.nc  (0.3 MB, 123 天)
+2026-09-30 15:30:04 INFO    写出 tp_1989.nc  (0.5 MB, 123 天)
+2026-09-30 15:30:05 INFO    写出 swvl1_2011.nc  (0.5 MB, 123 天)
+2026-09-30 15:30:05 INFO    写出 z200_2021.nc  (33.0 MB, 123 天)
+2026-09-30 15:30:05 INFO    写出 v850_1982.nc  (60.7 MB, 123 天)
+2026-09-30 15:30:06 INFO    写出 u850_1984.nc  (59.0 MB, 123 天)
+2026-09-30 15:36:17 INFO    写出 d2m_2001.nc  (0.3 MB, 123 天)
+2026-09-30 15:36:18 INFO    写出 t850_1990.nc  (39.8 MB, 123 天)
+2026-09-30 15:38:58 INFO    写出 swvl1_2012.nc  (0.5 MB, 123 天)
+2026-09-30 15:41:05 INFO    写出 tp_1990.nc  (0.4 MB, 123 天)
+2026-09-30 15:43:06 INFO    写出 d2m_2002.nc  (0.3 MB, 123 天)
+2026-09-30 15:43:22 INFO    写出 tp_1991.nc  (0.5 MB, 123 天)
+2026-09-30 15:43:31 INFO    写出 t850_1991.nc  (39.8 MB, 123 天)
+2026-09-30 15:43:53 INFO    写出 v850_1983.nc  (60.7 MB, 123 天)
+2026-09-30 15:44:43 INFO    写出 z200_2022.nc  (33.0 MB, 123 天)
+2026-09-30 15:51:27 INFO    写出 swvl1_2013.nc  (0.5 MB, 123 天)
+2026-09-30 15:52:42 INFO    写出 swvl1_2014.nc  (0.5 MB, 123 天)
+2026-09-30 15:52:53 INFO    写出 d2m_2003.nc  (0.3 MB, 123 天)
+2026-09-30 15:53:48 INFO    写出 d2m_2004.nc  (0.3 MB, 123 天)
+2026-09-30 15:53:48 INFO    写出 swvl1_2015.nc  (0.5 MB, 123 天)
+2026-09-30 15:55:14 INFO    写出 d2m_2005.nc  (0.3 MB, 123 天)
+2026-09-30 15:55:15 INFO    写出 swvl1_2016.nc  (0.5 MB, 123 天)
+2026-09-30 15:56:39 INFO    写出 swvl1_2017.nc  (0.5 MB, 123 天)
+2026-09-30 15:56:39 INFO    写出 d2m_2006.nc  (0.3 MB, 123 天)
+2026-09-30 15:58:02 INFO    写出 d2m_2007.nc  (0.3 MB, 123 天)
+2026-09-30 15:58:02 INFO    写出 swvl1_2018.nc  (0.5 MB, 123 天)
+2026-09-30 15:59:31 INFO    写出 swvl1_2019.nc  (0.5 MB, 123 天)
+2026-09-30 16:01:44 INFO    写出 swvl1_2020.nc  (0.5 MB, 123 天)
+2026-09-30 16:02:21 INFO    写出 swvl1_2021.nc  (0.5 MB, 123 天)
+2026-09-30 16:02:22 INFO    写出 t850_1992.nc  (39.8 MB, 123 天)
+2026-09-30 16:04:51 INFO    写出 d2m_2008.nc  (0.3 MB, 123 天)
+2026-09-30 16:05:12 INFO    写出 swvl1_2022.nc  (0.5 MB, 123 天)
+2026-09-30 16:05:13 INFO    写出 tp_1992.nc  (0.5 MB, 123 天)
+2026-09-30 16:05:13 INFO    写出 t850_1993.nc  (39.8 MB, 123 天)
+2026-09-30 16:05:14 INFO    写出 u850_1985.nc  (59.1 MB, 123 天)
+2026-09-30 16:05:14 INFO    写出 v850_1984.nc  (60.7 MB, 123 天)
+2026-09-30 16:07:45 INFO    写出 z200_2023.nc  (33.1 MB, 123 天)
+2026-09-30 16:08:50 INFO    写出 z200_2024.nc  (33.1 MB, 123 天)
+2026-09-30 16:12:41 INFO    写出 z200_2025.nc  (33.1 MB, 123 天)
+2026-09-30 16:15:03 INFO    写出 d2m_2009.nc  (0.3 MB, 123 天)
+2026-09-30 16:15:06 INFO    写出 t850_1994.nc  (39.8 MB, 123 天)
+2026-09-30 16:15:06 INFO    写出 v850_1985.nc  (60.6 MB, 123 天)
+2026-09-30 16:15:17 INFO    写出 tp_1993.nc  (0.5 MB, 123 天)
+2026-09-30 16:15:18 INFO    写出 swvl1_2023.nc  (0.5 MB, 123 天)
+2026-09-30 16:15:22 INFO    写出 u850_1986.nc  (59.2 MB, 123 天)
+2026-09-30 16:18:39 INFO    写出 swvl1_2024.nc  (0.5 MB, 123 天)
+2026-09-30 16:19:06 INFO    写出 swvl1_2025.nc  (0.5 MB, 123 天)
+2026-09-30 16:21:03 INFO    写出 d2m_2010.nc  (0.3 MB, 123 天)
+2026-09-30 16:21:06 INFO    写出 t850_1995.nc  (39.8 MB, 123 天)
+2026-09-30 16:21:07 INFO    写出 v850_1986.nc  (60.7 MB, 123 天)
+2026-09-30 16:21:07 INFO    写出 u850_1987.nc  (59.3 MB, 123 天)
+2026-09-30 16:21:11 INFO    写出 tp_1994.nc  (0.5 MB, 123 天)
+2026-09-30 16:23:32 INFO    写出 t850_1996.nc  (39.7 MB, 123 天)
+2026-09-30 16:23:32 INFO    写出 v850_1987.nc  (60.7 MB, 123 天)
+2026-09-30 16:23:34 INFO    写出 d2m_2011.nc  (0.3 MB, 123 天)
+2026-09-30 16:25:18 INFO    写出 tp_1995.nc  (0.5 MB, 123 天)
+2026-09-30 16:25:43 INFO    写出 u850_1988.nc  (58.9 MB, 123 天)
+2026-09-30 16:25:43 INFO    写出 v850_1988.nc  (60.6 MB, 123 天)
+2026-09-30 16:27:57 INFO    写出 d2m_2012.nc  (0.3 MB, 123 天)
+2026-09-30 16:28:08 INFO    写出 u850_1989.nc  (59.1 MB, 123 天)
+2026-09-30 16:28:09 INFO    写出 v850_1989.nc  (60.6 MB, 123 天)
+2026-09-30 16:29:27 INFO    写出 t850_1997.nc  (39.9 MB, 123 天)
+2026-09-30 16:30:00 INFO    写出 tp_1996.nc  (0.5 MB, 123 天)
+2026-09-30 16:30:14 INFO    写出 d2m_2013.nc  (0.3 MB, 123 天)
+2026-09-30 16:31:17 INFO    写出 u850_1990.nc  (59.1 MB, 123 天)
+2026-09-30 16:31:17 INFO    swvl1  源=planette  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 16:32:23 INFO    写出 t850_1998.nc  (39.7 MB, 123 天)
+2026-09-30 16:32:44 INFO    写出 tp_1997.nc  (0.4 MB, 123 天)
+2026-09-30 16:32:54 INFO    写出 v850_1990.nc  (60.7 MB, 123 天)
+2026-09-30 16:33:20 INFO    写出 swvl1_1981.nc  (0.5 MB, 123 天)
+2026-09-30 16:33:21 INFO    写出 u850_1991.nc  (59.3 MB, 123 天)
+2026-09-30 16:33:43 INFO    写出 d2m_2014.nc  (0.3 MB, 123 天)
+2026-09-30 16:33:44 INFO    写出 t850_1999.nc  (39.7 MB, 123 天)
+2026-09-30 16:35:32 INFO    写出 swvl1_1982.nc  (0.5 MB, 123 天)
+2026-09-30 16:35:57 INFO    写出 tp_1998.nc  (0.5 MB, 123 天)
+2026-09-30 16:36:02 INFO    写出 t850_2000.nc  (39.7 MB, 123 天)
+2026-09-30 16:38:19 INFO    写出 swvl1_1983.nc  (0.4 MB, 123 天)
+2026-09-30 16:39:55 INFO    写出 tp_1999.nc  (0.5 MB, 123 天)
+2026-09-30 16:40:21 INFO    写出 u850_1992.nc  (59.3 MB, 123 天)
+2026-09-30 16:40:22 INFO    写出 swvl1_1984.nc  (0.4 MB, 123 天)
+2026-09-30 16:40:24 INFO    写出 t850_2001.nc  (39.8 MB, 123 天)
+2026-09-30 16:41:52 INFO    写出 t850_2002.nc  (39.8 MB, 123 天)
+2026-09-30 16:41:52 INFO    写出 v850_1991.nc  (60.7 MB, 123 天)
+2026-09-30 16:42:58 INFO    写出 tp_2000.nc  (0.4 MB, 123 天)
+2026-09-30 16:43:11 INFO    写出 swvl1_1985.nc  (0.5 MB, 123 天)
+2026-09-30 16:43:15 INFO    写出 d2m_2015.nc  (0.3 MB, 123 天)
+2026-09-30 16:43:26 INFO    写出 u850_1993.nc  (59.3 MB, 123 天)
+2026-09-30 16:44:20 INFO    写出 t850_2003.nc  (39.8 MB, 123 天)
+2026-09-30 16:44:55 INFO    写出 tp_2001.nc  (0.4 MB, 123 天)
+2026-09-30 16:45:03 INFO    ssrd  源=openmeteo  年=1981-2025  月=[5, 6, 7, 8]
+2026-09-30 16:46:55 INFO    写出 v850_1992.nc  (60.8 MB, 123 天)
+2026-09-30 16:47:11 INFO    写出 swvl1_1986.nc  (0.5 MB, 123 天)
+2026-09-30 16:47:19 INFO    写出 tp_2002.nc  (0.5 MB, 123 天)
+2026-09-30 16:47:19 INFO    写出 u850_1994.nc  (59.2 MB, 123 天)
