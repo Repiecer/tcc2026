@@ -372,6 +372,20 @@ def om_fetch_year(factor: Factor, year: int, months: list[int],
         time.sleep(args.sleep)
 
     df = pd.DataFrame(cols).reindex(columns=range(len(pts)))
+
+    # ⚠️ 全 NaN 保险丝（2026-09-30 新增）
+    # Open-Meteo 对"在指定模型下不提供的变量"不报错，而是返回
+    # {"变量名": [null, null, ...]}。此时下面的 Series 全是 NaN，
+    # 却依然能写出一个"看起来正常"的 nc 文件 —— 属静默失败。
+    # 实测踩过两次：mslp 的 JSON key 写错、ssrd 误用 era5_land。
+    if not np.isfinite(df.to_numpy(dtype="float64")).any():
+        raise RuntimeError(
+            f"Open-Meteo 返回的 `{factor.om_var}` 全部为 null（models={factor.om_models}）。"
+            "常见原因：该变量在指定模型下不提供。已实测："
+            "shortwave_radiation 需用 models=era5（era5_land 不支持）；"
+            "latent_heat_flux 在 era5 与 era5_land 下都不提供。"
+            "请先用一个小请求验证变量名与模型，再重跑。")
+
     daily = df.resample("1D").sum(min_count=1) if factor.om_agg == "sum" else df.resample("1D").mean()
     daily = daily.loc[daily.index.month.isin(months)]
 

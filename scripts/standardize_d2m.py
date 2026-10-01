@@ -1,33 +1,29 @@
-"""SWVL1（表层土壤体积含水量）标准化脚本。
+"""D2m（2 米露点温度）标准化脚本。
 
-产出研究区土壤湿度的因子序列，供后续预测模型使用。
+产出研究区露点的因子序列，供后续预测模型使用。
 
-用途（规划书 03 的 H2 因子）：
-    前期土壤偏干 → 蒸散减弱 → 潜热减少 → 感热增强 → 后期高温增强，预期负相关。
+用途（规划书 03 的 H6 因子）：
+    前期偏干（露点低）→ 蒸发需求大、土壤失水快 → 高温易发展，预期负相关。
 
-与 tmax/sst/z500/mslp 的异同
-----------------------------
+与 tmax/sst/z500/mslp/swvl1 的异同
+----------------------------------
 相同：区域平均 → 减逐日历日气候态 → 除以训练期 sigma（同一套算法）。
-不同：本脚本保留了**土壤湿度的日均值**，不做累积（不像 TP 那样是累积量）。
+不同：历史上有两种源网格，故保留"任意网格精确提取"的写法（见 extract）。
 
-⚠️ 数据源不一致（重要，必须记录）
-    `data/raw/swvl1/` 里混了两种源和两种网格：
-      · 25 个文件来自 Planette ERA5（0.25°，25×49）
-      · 20 个文件来自 Open-Meteo ERA5-Land（0.5°，13×25）
-    ERA5 与 ERA5-Land 的表层土壤湿度是**不同产品**，存在系统性差异。
-    本脚本把两者都精确提取到 tmax 的 0.5° 目标网格（匹配误差 0，
-    0.25° 是 0.5° 的超集，无插值损失），但**源产品混用这个事实无法消除**，
-    需要在报告里说明，并建议日后统一重下。
-    脚本运行时会打印每个文件的来源。
+数据源（已统一）
+    `data/raw/d2m/` 45 个文件全部来自 Planette ERA5（0.25°，25×49），1981-2025。
+    历史遗留：1982-1992 那 11 年曾用 Open-Meteo ERA5-Land 下载，两源区域平均
+    相差约 0.51 degC；若与其余年份混用，会在训练期内部造成台阶。现已全部
+    改用 Planette 重下，混源已消除。脚本仍保留来源统计，一旦再现混源会自动告警。
 
 用法：
-    python scripts/standardize_swvl1.py
+    python scripts/standardize_d2m.py
 
 产出：
-    data/proc/swvl1_indices.nc     标准化指数 (index, time)
-    data/proc/swvl1_anomaly.nc     距平 (index, time)
-    data/proc/swvl1_norm_params.nc clim / sigma (index, doy)
-    docs/data_dictionary_swvl1.md
+    data/proc/d2m_indices.nc      标准化指数 (index, time)
+    data/proc/d2m_anomaly.nc      距平 (index, time)
+    data/proc/d2m_norm_params.nc  clim / sigma (index, doy)
+    （数据字典见 scripts/write_dictionaries.py）
 """
 
 from collections import Counter
@@ -37,14 +33,12 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-RAW_DIR = Path("data/raw/swvl1")
+RAW_DIR = Path("data/raw/d2m")
 OUT_DIR = Path("data/proc")
 
-# 目标网格：与 data/raw/tmax 完全一致（脚本启动时从 tmax 读取）
 TMAN_REF = Path("data/raw/tmax/tmax_1981_05.nc")
 
 REGIONS = {
-    # 整个研究区（土壤湿度在此尺度上较均匀，区域平均有意义）
     "yrb": ((28, 34), (110, 122)),
 }
 TRAIN = range(1981, 2016)
@@ -53,7 +47,6 @@ FLOOR = 0.5
 
 
 def target_grid():
-    """从 tmax 参考文件读取目标经纬度轴，并把范围映射成数值边界。"""
     ref = xr.open_dataset(TMAN_REF)
     lat = np.round(ref.latitude.values, 4)
     lon = np.round(ref.longitude.values, 4)
@@ -62,46 +55,48 @@ def target_grid():
 
 
 def extract(da, tlat, tlon):
-    """按目标经纬度轴精确提取（最近邻索引 + 误差校验）。
-
-    同时适用于 0.25° 与 0.5° 两种源网格，因为目标点都精确落在源网格上。
-    """
     def pick(target, grid):
         idx = np.array([int(np.argmin(np.abs(grid - t))) for t in target])
         err = float(np.max(np.abs(grid[idx] - target)))
         if err > 1e-6:
             raise ValueError(
-                f"网格对不上：最大误差 {err:.2e}。源网格 {grid[:3]}... 与目标 {target[:3]}... 不兼容")
+                f"网格对不上：最大误差 {err:.2e}。"
+                f"源网格 {grid[:3]}... 与目标 {target[:3]}... 不兼容")
         return idx
 
     il = pick(tlat, np.asarray(da.latitude.values, dtype="float64"))
     io = pick(tlon, np.asarray(da.longitude.values, dtype="float64"))
-    out = da.isel(latitude=il, longitude=io)
-    # 坐标保持 float64：若转成 float32，np.cos 会退化为 float32 权重，
-    # 给区域平均引入约 1e-7 的精度损失（实测端到端差 6e-7）
-    return out.assign_coords(latitude=tlat.astype("float64"), longitude=tlon.astype("float64"))
+    return da.isel(latitude=il, longitude=io).assign_coords(
+        # 坐标保持 float64：若转成 float32，np.cos 会退化为 float32 权重，
+        # 给区域平均引入约 1e-7 的精度损失
+        latitude=tlat.astype("float64"), longitude=tlon.astype("float64"))
 
 
 def index_series():
-    """每个区域一条面积加权平均的时间序列（m3/m3）。"""
-    files = sorted(RAW_DIR.glob("swvl1_*.nc"))
+    """每个区域一条面积加权平均的时间序列（degC）。"""
+    files = sorted(RAW_DIR.glob("d2m_*.nc"))
     if not files:
-        raise FileNotFoundError(f"no file: {RAW_DIR}/swvl1_*.nc")
+        raise FileNotFoundError(f"no file: {RAW_DIR}/d2m_*.nc")
     tlat, tlon = target_grid()
 
     acc = {k: [] for k in REGIONS}
     sources = Counter()
+    years = []
     for f in files:
         ds = xr.open_dataset(f)
-        src = ds["soil_moisture_0_7cm"].attrs.get("source", "?")
-        sources["Planette" if "Planette" in src else "Open-Meteo"] += 1
+        v0 = ds["dew_point_2m"]
+        s = v0.attrs.get("source", "")
+        src = "Planette" if "Planette" in s else ("Open-Meteo" if "Open-Meteo" in s else s or "未知")
+        sources[src] += 1
+        years.append(int(f.stem.split("_")[-1]))
         # 转 float64 再累加，消掉 float32 的累积舍入
-        v = extract(ds["soil_moisture_0_7cm"].astype("float64"), tlat, tlon)
+        v = extract(v0.astype("float64"), tlat, tlon)
 
-        # 量级检查：体积含水量应在 0-0.65 之间
-        if not (-0.01 < float(v.min()) and float(v.max()) < 0.65):
-            raise ValueError(f"{f.name} 数值范围 {float(v.min()):.4f} ~ {float(v.max()):.4f}，"
-                             "不像体积含水量 m3/m3")
+        # 量级检查：研究区 5-8 月露点大致 -15 ~ 35 degC
+        if not (-25 < float(v.min()) and float(v.max()) < 45):
+            raise ValueError(
+                f"{f.name} 数值范围 {float(v.min()):.2f} ~ {float(v.max()):.2f}，"
+                "不像摄氏度露点。若源数据是 K（约 260-300），说明少了 shift=-273.15")
 
         for name, (lr, sr) in REGIONS.items():
             sub = v.sel(latitude=slice(*lr), longitude=slice(*sr))
@@ -109,21 +104,16 @@ def index_series():
             acc[name].append(sub.weighted(sub.notnull() * w).mean(["latitude", "longitude"]))
         ds.close()
 
-    print("  数据源统计:", dict(sources))
-    if len(sources) > 1:
-        print("  ⚠️  检测到多源混用：ERA5 与 ERA5-Land 的表层土壤湿度是不同产品，")
-        print("      存在系统性差异。已在数据字典中记录，建议日后统一重下。")
-
+    print("  数据源统计:", dict(sources), f" 年份 {min(years)}-{max(years)} 共 {len(years)} 年")
     out = {}
     for name in REGIONS:
         s = xr.concat(acc[name], dim="time").sortby("time").rename(name)
-        s.attrs["units"] = "m3 m-3"
+        s.attrs["units"] = "degC"
         out[name] = s
     return out
 
 
 def climatology(series, years=None):
-    """逐日历日的常年平均 clim 和波动幅度 sigma（只用训练期年份）。"""
     y = np.asarray(series["time"].dt.year)
     if years is not None:
         assert set(np.unique(y)) <= set(years), "years 必须覆盖数据里出现的所有年份"
@@ -203,12 +193,12 @@ def save(named, anomaly_dict, clim_dict):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     zs = stack(named)
-    zs.attrs["units"] = "1 (z-score of SWVL1 anomaly)"
-    xr.Dataset({"swvl1_index": zs}).to_netcdf(OUT_DIR / "swvl1_indices.nc")
+    zs.attrs["units"] = "1 (z-score of D2m anomaly)"
+    xr.Dataset({"d2m_index": zs}).to_netcdf(OUT_DIR / "d2m_indices.nc")
 
     an = stack(anomaly_dict)
-    an.attrs["units"] = "m3 m-3"
-    xr.Dataset({"swvl1_anom": an}).to_netcdf(OUT_DIR / "swvl1_anomaly.nc")
+    an.attrs["units"] = "degC"
+    xr.Dataset({"d2m_anom": an}).to_netcdf(OUT_DIR / "d2m_anomaly.nc")
 
     names = list(named)
     xr.Dataset(
@@ -220,12 +210,14 @@ def save(named, anomaly_dict, clim_dict):
             "window_days": f"{WINDOW}",
             "sigma_floor_ratio": f"{FLOOR}",
             "regions": str(REGIONS),
-            "index_mean_formula": "mean over grid cells of sum(S*cos(lat))/sum(cos(lat))",
-            "source": "data/raw/swvl1/swvl1_YYYY.nc (Planette ERA5 + Open-Meteo ERA5-Land 混源)",
-            "unit": "m3 m-3",
+            "index_mean_formula": "mean over grid cells of sum(D*cos(lat))/sum(cos(lat))",
+            "source": "data/raw/d2m/d2m_YYYY.nc (Planette ERA5, 0.25 deg, 1981-2025)",
+            "unit": "degC",
             "zscore_formula": "(index - clim) / sigma",
         },
-    ).to_netcdf(OUT_DIR / "swvl1_norm_params.nc")
+    ).to_netcdf(OUT_DIR / "d2m_norm_params.nc")
+
+
 def main():
     series_dict = index_series()
     named, anomaly_dict, clim_dict = {}, {}, {}
@@ -237,6 +229,7 @@ def main():
     check(named, series_dict)
     save(named, anomaly_dict, clim_dict)
     print(f"\n已保存到 {OUT_DIR}/")
+    print("数据字典请运行: python scripts/write_dictionaries.py")
 
 
 if __name__ == "__main__":

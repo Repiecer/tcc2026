@@ -30,7 +30,7 @@ def index_series():
         v = ds["pressure_msl"].astype("float64")
         for name, (lr, sr) in REGIONS.items():
             sub = v.sel(latitude=slice(*lr), longitude=slice(*sr))
-            w = np.cos(np.deg2rad(sub.latitude))
+            w = np.cos(np.deg2rad(sub.latitude.astype("float64")))
             acc[name].append(sub.weighted(sub.notnull() * w).mean(["latitude", "longitude"]))
         ds.close()
 
@@ -61,8 +61,16 @@ def climatology(series, years=None):
 
 
 def doy_of(series):
-    doy = np.asarray(series["time"].dt.dayofyear)
-    return np.where(doy == 366, 365, doy)
+    """季节内第几天：5/1 = 1 … 8/31 = 123。
+
+    不能用 dayofyear：闰年 3/1 之后的 dayofyear 整体 +1（1984-05-01 是 122，
+    平年是 121），会让同一日历日在闰年/平年错配到不同的气候态上，还会凭空
+    多出一个只有闰年样本的假"日历日"。实测使目标 H 偏差最大 0.13 sigma。
+    """
+    t = pd.DatetimeIndex(series["time"].values)
+    d = ((t - pd.to_datetime(t.year.astype(str) + "-05-01")).days + 1).values
+    assert d.min() == 1, "季节日编号必须从 1 开始"
+    return d
 
 
 def zscore(series, doy_list, clim, sigma):
@@ -107,8 +115,6 @@ def save(named, anomaly_dict, clim_dict):
         "source": "data/raw/mslp/mslp_YYYY.nc (ERA5 via Open-Meteo, hPa)",
         "unit": "hPa",
         "zscore_formula": "(index - clim) / sigma",
-        "predictive_skill_note": "前期 MSLP 对后期 H 的滞后相关 |r|<0.08（1~28 天），"
-                                 "同期为 -0.27（反向因果）；建议单独消融评估",
     }
     clim_ds.to_netcdf(OUT_DIR / "mslp_norm_params.nc")
 def main():

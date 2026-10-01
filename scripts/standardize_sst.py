@@ -33,7 +33,7 @@ def index_series():
 
         for name, (lr, sr) in REGIONS.items():
             sub = v.sel(latitude=slice(*lr), longitude=slice(*sr))
-            w = np.cos(np.deg2rad(sub.latitude))
+            w = np.cos(np.deg2rad(sub.latitude.astype("float64")))
             acc[name].append(sub.weighted(sub.notnull() * w).mean(["latitude", "longitude"]))
 
     out = {}
@@ -63,8 +63,10 @@ def climatology(series, years=None):
 
 
 def doy_of(series):
-    doy = np.asarray(series["time"].dt.dayofyear)
-    return np.where(doy == 366, 365, doy)
+    t = pd.DatetimeIndex(series["time"].values)
+    d = ((t - pd.to_datetime(t.year.astype(str) + "-03-01")).days + 1).values
+    assert d.min() == 1, "季节日编号必须从 1 开始"
+    return d
 
 
 def zscore(series, doy_list, clim, sigma):

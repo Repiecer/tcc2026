@@ -36,7 +36,9 @@ def main():
     H = xr.open_dataset(PROC_DIR / "tmax_H.nc")["H"]
     params = xr.open_dataset(PROC_DIR / "tmax_norm_params.nc")
 
-    doy = np.asarray(region["time"].dt.dayofyear)
+    # 用月份判断，不用 dayofyear —— 闰年 5-8 月的 dayofyear 整体 +1，
+    # 会把闰年的 6/30 混进 7 月、并漏掉闰年的 7/31
+    month = np.asarray(region["time"].dt.month)
     year = np.asarray(region["time"].dt.year)
 
     fig, axes = plt.subplots(2, 2, figsize=(13, 8.5))
@@ -75,7 +77,7 @@ def main():
 
     # ---- (3) 7 月平均 H 逐年 ----
     ax = axes[1, 0]
-    july = (doy >= 182) & (doy <= 212)
+    july = month == 7
     years = list(np.unique(year))
     july_mean = [H.values[(year == y) & july].mean() for y in years]
     colors = ["tab:blue" if y <= TRAIN_END else "tab:red" for y in years]
